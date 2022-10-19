@@ -31,14 +31,15 @@ class Player(FirstPersonController):
             roundness=.5,
             value=100,
             show_text=False,
-            position=(-.16, -.45)
+            position=(-.85, -.45)
         )
 
         self.gun = Entity(
             parent=camera.ui,
-            position=Vec2(.35, -.5),
+            position=Vec2(.6, -.5),
             scale=Vec3(.2, .2, .2),
             rotation=Vec3(10, 20, 5),
-            model="models/ak47.obj"
+            model="models/ak47.obj",
+            color=color.gray
         )
 

@@ -10,9 +10,9 @@ if __name__ == "__main__":
 
     game = Ursina(title="Simple FPS Game",
                   vsync=True,
-                  fullscreen=False,
+                  fullscreen=True,
                   borderless=False,
-                  forced_aspect_ratio=True,
+                  forced_aspect_ratio=False,
                   show_ursina_splash=not DEVELOPMENT_MODE,
                   development_mode=DEVELOPMENT_MODE,
                   editor_ui_enabled=DEVELOPMENT_MODE)
