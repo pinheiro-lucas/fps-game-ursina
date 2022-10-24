@@ -7,7 +7,6 @@ class Player(FirstPersonController):
     def __init__(self, pos):
         super().__init__(
             model="cube",
-            collider="box",
             speed=15,
             jump_height=2,
             jump_duration=.2,
@@ -17,6 +16,8 @@ class Player(FirstPersonController):
             height=2,
             position=pos
         )
+
+        self.collider = BoxCollider(self, (0, 1, 0), (1, 2, 1))
 
         # Destroy the old crosshair and build the new one
         destroy(self.cursor)
