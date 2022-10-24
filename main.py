@@ -1,5 +1,7 @@
 from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
+from ursina.shaders import lit_with_shadows_shader
+
 
 from src.player import Player
 from src.map import Map
@@ -7,6 +9,8 @@ from src.grappling_hook import Ghook
 
 if __name__ == "__main__":
     DEVELOPMENT_MODE = True
+
+    Entity.default_shader = lit_with_shadows_shader
 
     game = Ursina(title="Simple FPS Game",
                   vsync=True,

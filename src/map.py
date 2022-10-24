@@ -1,10 +1,8 @@
 from ursina import *
-from ursina.shaders import lit_with_shadows_shader
 
 
 class Map:
     def __init__(self):
-        Entity.default_shader = lit_with_shadows_shader
         self.ground = Entity(model='plane',
                              scale=(100, 1, 100),
                              texture='grass',
