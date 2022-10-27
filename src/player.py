@@ -41,6 +41,26 @@ class Player(FirstPersonController):
             scale=Vec3(.2, .2, .2),
             rotation=Vec3(10, 20, 5),
             model="models/ak47.obj",
-            color=color.gray
+            color=color.gray,
+            on_cooldown=False
         )
 
+    def shoot(self):
+        if not self.gun.on_cooldown:
+            self.gun.on_cooldown = True
+            self.gun.blink(color.orange)
+            bullet = Entity(
+                parent=camera,
+                model="cube",
+                scale=.1,
+                color=color.black,
+                collider="box"
+            )
+            bullet.world_parent = scene
+            bullet.animate_position(
+                bullet.position + bullet.forward * 1000,
+                curve=curve.linear,
+                duration=1.5
+            )
+            destroy(bullet, delay=2)
+            invoke(setattr, self.gun, "on_cooldown", False, delay=.20)

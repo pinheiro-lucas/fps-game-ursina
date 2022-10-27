@@ -1,5 +1,4 @@
 from ursina import *
-from ursina.prefabs.first_person_controller import FirstPersonController
 from ursina.shaders import lit_with_shadows_shader
 
 
@@ -12,14 +11,16 @@ if __name__ == "__main__":
 
     Entity.default_shader = lit_with_shadows_shader
 
-    game = Ursina(title="Simple FPS Game",
-                  vsync=True,
-                  fullscreen=True,
-                  borderless=False,
-                  forced_aspect_ratio=False,
-                  show_ursina_splash=not DEVELOPMENT_MODE,
-                  development_mode=DEVELOPMENT_MODE,
-                  editor_ui_enabled=DEVELOPMENT_MODE)
+    game = Ursina(
+        title="Simple FPS Game",
+        vsync=True,
+        fullscreen=True,
+        borderless=False,
+        forced_aspect_ratio=False,
+        show_ursina_splash=not DEVELOPMENT_MODE,
+        development_mode=DEVELOPMENT_MODE,
+        editor_ui_enabled=DEVELOPMENT_MODE
+    )
 
     game.map = Map()
     player = Player((0, 0, 0))
@@ -27,7 +28,8 @@ if __name__ == "__main__":
 
     # All the custom commands here
     commands = {
-        "escape": exit
+        "escape": exit,
+        "left mouse": player.shoot
     }
 
     # Update is better to make some features
