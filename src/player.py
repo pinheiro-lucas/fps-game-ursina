@@ -51,6 +51,7 @@ class Player(FirstPersonController):
             self.gun.blink(color.orange)
             bullet = Entity(
                 parent=camera,
+                position=Vec3(.72, -.28, 2.2),
                 model="cube",
                 scale=.1,
                 color=color.black,
