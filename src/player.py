@@ -46,6 +46,7 @@ class Player(FirstPersonController):
         )
 
     def shoot(self):
+        # Todo: Check if player is looking to grappling hook
         if not self.gun.on_cooldown:
             self.gun.on_cooldown = True
             self.gun.blink(color.orange)
