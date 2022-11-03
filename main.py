@@ -1,10 +1,13 @@
 from ursina import *
 from ursina.shaders import lit_with_shadows_shader
 
+import asyncio
+import multiprocessing
 
 from src.player import Player
 from src.map import Map
 from src.grappling_hook import Ghook
+from src.client import Server
 
 if __name__ == "__main__":
     DEVELOPMENT_MODE = True
@@ -25,20 +28,38 @@ if __name__ == "__main__":
     game.map = Map()
     player = Player((0, 0, 0))
     grapple = Ghook((3, 10, 3), player)
+    server = Server()
+
+    # Simple function to close the game and all stuff running in the back
+    def close():
+        for process in multiprocessing.active_children():
+            process.terminate()
+        exit()
 
     # All the custom commands here
     commands = {
-        "escape": exit,
+        "escape": close,
         "left mouse": player.shoot
     }
 
     # Update is better to make some features
     def update():
+        server.player = {
+            "nickname": player.nickname,
+            "hp": player.hp
+        }
         # key: https://www.ursinaengine.org/cheat_sheet_dark.html#Keys
         # value: 0 or 1 (1 is pressed)
         for key, value in held_keys.items():
             if key in commands and value != 0:
                 # Calls the function
                 commands[key]()
+
+    # Server connection stuff
+    def connect():
+        asyncio.run(server.main())
+
+    connection = multiprocessing.Process(target=connect)
+    connection.start()
 
     game.run()

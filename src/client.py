@@ -1,50 +1,63 @@
+import time
+
 import socketio
 import asyncio
 from aioconsole import ainput, aprint
 
-client = socketio.AsyncClient()
-name = ''
+HOST = "0.0.0.0"
+PORT = 8000
 
 
-@client.event
-async def connect():
-    print('Cliente conectado')
+class Server:
+    def __init__(self):
+        self.client = socketio.AsyncClient()
+        self._player = {
+            "nickname": "",
+            "hp": 0
+        }
 
+        # Client events
+        self.connect = self.client.event(self.connect)
+        self.disconnect = self.client.event(self.disconnect)
+        self.receive = self.client.event(self.receive)
 
-@client.event
-async def disconnect():
-    print('Cliente desconectado')
+    @property
+    def player(self):
+        return self._player
 
+    @player.setter
+    def player(self, info):
+        self._player = info
 
-@client.event
-async def receive(data):
-    if data['name'] != name:
-        print(f'[{data["name"]}] => {data["message"]}')
+    async def connect(self):
+        print('Connected to the server')
+        # Todo: Closes main menu
 
+    async def disconnect(self):
+        print('Disconnected from the server')
+        # Todo: Returns to main menu
 
-async def send():
-    global name
-    name = input('Nome: ')
-    while True:
-        await asyncio.sleep(.1)
-        message = await ainput()
-        await client.emit('receive', {
-            'name': name,
-            'message': message
-        })
+    async def receive(self, data):
+        if data["nickname"] != self.player['nickname']:
+            print(f'[{data["nickname"]}] => {data}')
 
+    async def send(self):
+        while True:
+            await asyncio.sleep(.1)
+            teste = self.player
+            await self.client.emit('receive', teste)
 
-async def connect_to_server(ip: str):
-    await client.connect(ip)
-    await client.wait()
+    async def connect_to_server(self, ip):
+        await self.client.connect(ip)
+        await self.client.wait()
 
-
-async def main():
-    await asyncio.gather(
-        connect_to_server('http://localhost:8000'),
-        send()
-    )
-
-if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    async def main(self):
+        while True:
+            try:
+                await asyncio.gather(
+                    self.connect_to_server(f"http://{HOST}:{PORT}"),
+                    self.send()
+                )
+            except socketio.exceptions.ConnectionError:
+                print("Connection failed. \nRetrying in 5s...")
+            time.sleep(5)

@@ -5,6 +5,9 @@ from ursina.prefabs.health_bar import HealthBar
 
 class Player(FirstPersonController):
     def __init__(self, pos):
+        # Todo: Nickname box in-game
+        self._nickname = input("[TEMPORARY] Nickname: ")
+
         super().__init__(
             model="cube",
             speed=15,
@@ -17,6 +20,8 @@ class Player(FirstPersonController):
             position=pos
         )
 
+        self._hp = 100
+
         self.collider = BoxCollider(self, (0, 1, 0), (1, 2, 1))
 
         # Destroy the old crosshair and build the new one
@@ -27,10 +32,10 @@ class Player(FirstPersonController):
             texture="../materials/mira.png",
             scale=.025)
 
-        self.health = HealthBar(
+        self.health_bar = HealthBar(
             bar_color=color.red,
             roundness=.5,
-            value=100,
+            value=self._hp,
             show_text=False,
             position=(-.85, -.45)
         )
@@ -44,6 +49,22 @@ class Player(FirstPersonController):
             color=color.gray,
             on_cooldown=False
         )
+
+    @property
+    def hp(self):
+        return self._hp
+
+    @hp.setter
+    def hp(self, n):
+        self._hp = n
+
+    @property
+    def nickname(self):
+        return self._nickname
+
+    @nickname.setter
+    def nickname(self, new_name):
+        self._nickname = new_name
 
     def shoot(self):
         # Todo: Check if player is looking to grappling hook
