@@ -132,3 +132,8 @@ dmypy.json
 test.py
 teste.py
 lab.py
+
+# Build
+/build
+/dist
+main.spec
