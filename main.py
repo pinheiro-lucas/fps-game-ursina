@@ -2,7 +2,7 @@ from ursina import *
 from ursina.shaders import lit_with_shadows_shader
 
 import asyncio
-import multiprocessing
+import threading
 
 from src.player import Player
 from src.map import Map
@@ -30,15 +30,9 @@ if __name__ == "__main__":
     grapple = Ghook((3, 10, 3), player)
     server = Server()
 
-    # Simple function to close the game and all stuff running in the back
-    def close():
-        for process in multiprocessing.active_children():
-            process.terminate()
-        exit()
-
     # All the custom commands here
     commands = {
-        "escape": close,
+        "escape": exit,
         "left mouse": player.shoot
     }
 
@@ -59,7 +53,7 @@ if __name__ == "__main__":
     def connect():
         asyncio.run(server.main())
 
-    connection = multiprocessing.Process(target=connect)
+    connection = threading.Thread(target=connect, daemon=True)
     connection.start()
 
     game.run()
