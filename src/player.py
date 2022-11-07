@@ -6,7 +6,7 @@ from ursina.prefabs.health_bar import HealthBar
 class Player(FirstPersonController):
     def __init__(self, pos):
         # Todo: Nickname box in-game
-        self._nickname = input("[TEMPORARY] Nickname: ")
+        self._nickname = ""
 
         super().__init__(
             model="cube",

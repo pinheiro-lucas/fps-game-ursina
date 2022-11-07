@@ -30,8 +30,9 @@ async def disconnect(player_id, *args, **kwargs):
 
 @server.event
 async def receive(player_id, data):
-    print(f'[{player_id}] => {data}')
-    await server.emit('receive', data)
+    PLAYERS[player_id] = data
+    print(PLAYERS)
+    await server.emit('receive', PLAYERS)
 
 
 if __name__ == '__main__':

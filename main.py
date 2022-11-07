@@ -14,6 +14,8 @@ if __name__ == "__main__":
 
     Entity.default_shader = lit_with_shadows_shader
 
+    nickname = input("Nickname: ").capitalize()
+
     game = Ursina(
         title="Simple FPS Game",
         vsync=True,
@@ -27,8 +29,10 @@ if __name__ == "__main__":
 
     game.map = Map()
     player = Player((0, 0, 0))
-    grapple = Ghook((3, 10, 3), player)
+    Ghook((3, 10, 3), player)
     server = Server()
+
+    player.nickname = nickname
 
     # All the custom commands here
     commands = {
@@ -40,7 +44,8 @@ if __name__ == "__main__":
     def update():
         server.player = {
             "nickname": player.nickname,
-            "hp": player.hp
+            "hp": player.hp,
+            "pos": tuple(player.position)
         }
         # key: https://www.ursinaengine.org/cheat_sheet_dark.html#Keys
         # value: 0 or 1 (1 is pressed)

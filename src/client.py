@@ -38,14 +38,13 @@ class Server:
         # Todo: Returns to main menu
 
     async def receive(self, data):
-        if data["nickname"] != self.player['nickname']:
-            print(f'[{data["nickname"]}] => {data}')
+        # if data["nickname"] != self._player['nickname']:
+        print(data)
 
     async def send(self):
         while True:
             await asyncio.sleep(.1)
-            teste = self.player
-            await self.client.emit('receive', teste)
+            await self.client.emit('receive', self._player)
 
     async def connect_to_server(self, ip):
         await self.client.connect(ip)
