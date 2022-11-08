@@ -2,17 +2,17 @@ const { WebSocketServer } = require("ws");
 
 require("dotenv").config();
 
-const server_info = {
+const serverInfo = {
   ip: process.env.SERVER_IP ?? "localhost",
   port: process.env.SERVER_PORT ?? 3000,
 };
 
 const server = new WebSocketServer(
   {
-    port: server_info.port,
+    port: serverInfo.port,
   },
   () => {
-    console.log(`ws://${server_info.ip}:${server_info.port}`);
+    console.log(`ws://${serverInfo.ip}:${serverInfo.port}`);
   }
 );
 
