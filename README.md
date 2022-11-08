@@ -4,11 +4,13 @@
 
 ## How to use:
 
-- Server
+- Copy `.env.template` to `.env`
+
+- Server:
   - `npm i`
   - `npm start`
 
-- Client
+- Client:
   - `pip install -r requirements.txt`
   - `python main.py`
 

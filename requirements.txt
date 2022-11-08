@@ -1,3 +1,4 @@
 ursina
 xlib
 websocket-client
+python-dotenv

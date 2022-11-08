@@ -1,6 +1,20 @@
 const { WebSocketServer } = require("ws");
 
-const server = new WebSocketServer({ port: 3000 });
+require("dotenv").config();
+
+const server_info = {
+  ip: process.env.SERVER_IP ?? "localhost",
+  port: process.env.SERVER_PORT ?? 3000,
+};
+
+const server = new WebSocketServer(
+  {
+    port: server_info.port,
+  },
+  () => {
+    console.log(`ws://${server_info.ip}:${server_info.port}`);
+  }
+);
 
 let players = {};
 

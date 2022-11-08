@@ -2,6 +2,8 @@ from ursina import *
 from ursina.shaders import lit_with_shadows_shader
 
 from websocket import WebSocket
+from dotenv import dotenv_values
+
 import json
 
 from src.player import Player
@@ -10,12 +12,16 @@ from src.grappling_hook import Ghook
 from src.enemy import Enemy
 
 if __name__ == "__main__":
-    DEVELOPMENT_MODE = True
+    env = dotenv_values()
+
+    DEVELOPMENT_MODE = json.loads(env['DEVELOPMENT_MODE'])
+    SERVER_IP = env['SERVER_IP']
+    SERVER_PORT = env['SERVER_PORT']
 
     nickname = input("Nickname: ").capitalize()
 
     server = WebSocket()
-    server.connect("ws://localhost:3000")
+    server.connect(f"ws://{SERVER_IP}:{SERVER_PORT}")
 
     Entity.default_shader = lit_with_shadows_shader
 
