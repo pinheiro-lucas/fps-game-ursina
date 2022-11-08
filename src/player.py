@@ -2,11 +2,14 @@ from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
 from ursina.prefabs.health_bar import HealthBar
 
+import json
+
 
 class Player(FirstPersonController):
-    def __init__(self, pos):
+    def __init__(self, pos, nickname):
         # Todo: Nickname box in-game
-        self._nickname = ""
+        self._nickname = nickname
+        self.online = True
 
         super().__init__(
             model="cube",
@@ -87,3 +90,13 @@ class Player(FirstPersonController):
             )
             destroy(bullet, delay=2)
             invoke(setattr, self.gun, "on_cooldown", False, delay=.20)
+
+    def to_json_str(self):
+        player_info = {
+            "id": self._nickname,
+            "pos": tuple(self.position),
+            "online": self.online
+        }
+
+        return json.dumps(player_info)
+
