@@ -137,3 +137,6 @@ lab.py
 /build
 /dist
 main.spec
+
+# JS
+node_modules

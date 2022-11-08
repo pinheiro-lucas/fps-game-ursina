@@ -1,0 +1,29 @@
+{
+  "name": "fps-game-ursina",
+  "version": "1.0.0",
+  "description": "Simple FPS Game using Ursina (Python)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node .",
+    "dev": "nodemon .",
+    "client": "python main.py",
+    "postinstall": "pip install -r requirements.txt"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pinheiro-Lucas/fps-game-ursina.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Pinheiro-Lucas/fps-game-ursina/issues"
+  },
+  "homepage": "https://github.com/Pinheiro-Lucas/fps-game-ursina#readme",
+  "dependencies": {
+    "ws": "^8.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
