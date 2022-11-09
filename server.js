@@ -44,7 +44,9 @@ server.on("connection", client => {
 
   client.on("ping", data => {
     const playerId = data.toString();
-    players[playerId].lastPing = Date.now();
+    if (Object.keys(players).includes(playerId)) {
+      players[playerId].lastPing = Date.now();
+    }
   });
 });
 
