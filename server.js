@@ -17,9 +17,10 @@ const server = new WebSocketServer(
 );
 
 let players = {};
+let online = {};
 
 server.on("connection", client => {
-  let cache = null;
+  let cache = undefined;
 
   client.on("message", data => {
     data = data.toString();
@@ -44,23 +45,28 @@ server.on("connection", client => {
 
   client.on("ping", data => {
     const playerId = data.toString();
-    if (Object.keys(players).includes(playerId)) {
-      players[playerId].lastPing = Date.now();
-    }
+    online[playerId] = Date.now();
   });
 });
 
 setInterval(async () => {
-  if (Object.keys(players).length > 0) {
-    Object.values(players).forEach(player => {
-      const timeInactive = Date.now() - player.lastPing;
+  if (Object.keys(online).length > 0) {
+    for (const [playerId, lastPing] of Object.entries(online)) {
+      const timeInactive = Date.now() - lastPing;
+
       // 5 seconds
       if (timeInactive > 5000) {
-        delete players[player.id];
+        delete online[playerId];
+        if (Object.keys(players).includes(playerId)) {
+          delete players[playerId];
+        }
       }
-    });
+    }
   }
 
-  console.log(players); // Debug
+  // Debug
+  console.log(players);
+  console.log(online);
+
   // 1 second
 }, 1000);
