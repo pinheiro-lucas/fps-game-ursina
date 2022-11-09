@@ -74,22 +74,14 @@ class Player(FirstPersonController):
         if not self.gun.on_cooldown:
             self.gun.on_cooldown = True
             self.gun.blink(color.orange)
-            bullet = Entity(
-                parent=camera,
-                position=Vec3(.72, -.28, 2.2),
-                model="cube",
-                scale=.1,
+            Bullet(
+                model="sphere",
+                scale=0.05,
                 color=color.black,
-                collider="box"
+                position=self.camera_pivot.world_position+Vec3(self.forward.x, 0, self.forward.z),
+                rotation=self.camera_pivot.world_rotation
             )
-            bullet.world_parent = scene
-            bullet.animate_position(
-                bullet.position + bullet.forward * 1000,
-                curve=curve.linear,
-                duration=1.5
-            )
-            destroy(bullet, delay=2)
-            invoke(setattr, self.gun, "on_cooldown", False, delay=.20)
+            invoke(setattr, self.gun, "on_cooldown", False, delay=1)
 
     def to_json_str(self):
         player_info = {
@@ -100,3 +92,16 @@ class Player(FirstPersonController):
 
         return json.dumps(player_info)
 
+class Bullet(Entity):
+    def __init__(self, speed=1500, lifetime=4,**kwargs):
+        super().__init__(**kwargs)
+        self.speed = speed
+        self.lifetime = lifetime
+        self.start = time.time()
+
+    def update(self):
+        ray = raycast(self.world_position, self.forward, distance=self.speed*time.dt, ignore=[self, 'player'])
+        if not ray.hit and  time.time() - self.start < self.lifetime:
+            self.world_position += self.forward * self.speed * time.dt
+        else:
+            destroy(self)
