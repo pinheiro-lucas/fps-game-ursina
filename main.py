@@ -54,17 +54,23 @@ if __name__ == "__main__":
         while True:
             # Update rate
             time.sleep(.01)
+
             # Receive server information
-            teste = server.receive()
-            for enemy in teste:
+            data = server.receive()
+
+            for enemy in data.values():
                 enemy_id = enemy["id"]
                 if enemy_id != nickname:
                     # Creates/updates each player position
                     if enemy_id in enemies:
                         enemies[enemy_id].world_position = enemy["pos"]
                     else:
-                        e = Enemy(enemy["pos"])
-                        enemies[enemy_id] = e
+                        enemies[enemy_id] = Enemy(enemy["pos"])
+            
+            for enemy_id in list(enemies):
+                if enemy_id not in data.keys():
+                    destroy(enemies[enemy_id])
+                    del enemies[enemy_id]
 
 
     multiplayer = Thread(target=network, daemon=True).start()

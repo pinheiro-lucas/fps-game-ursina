@@ -31,9 +31,9 @@ class Server:
         except:
             print("Error on sending data to server")
 
-    def receive(self):
+    def receive(self) -> dict[str] | None:
         try:
-            return json.loads(self.server.recv()).values()
+            return json.loads(self.server.recv())
         except err.WebSocketConnectionClosedException:
             # Todo: Log
             print("WebSocketConnectionClosedException")

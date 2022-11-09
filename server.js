@@ -34,7 +34,7 @@ server.on("connection", client => {
         delete players[data.id];
       }
 
-      console.log(players);
+      // console.log(players);
 
       server.clients.forEach(client => {
         client.send(JSON.stringify(players));
