@@ -7,7 +7,7 @@ from websocket import WebSocket
 from dotenv import dotenv_values
 
 import json
-import threading
+from threading import Thread
 
 from src.player import Player
 from src.map import Map
@@ -55,6 +55,7 @@ if __name__ == "__main__":
         "escape": close,
         "left mouse": player.shoot
     }
+    # Send connection info
     server.send(player.to_json_str())
 
     # Multiplayer thread
@@ -75,13 +76,17 @@ if __name__ == "__main__":
                         e = Enemy(enemy["pos"])
                         enemies[enemy_id] = e
 
-    multiplayer = threading.Thread(target=receive, daemon=True)
-    multiplayer.start()
+    def send_ping():
+        while True:
+            server.ping()
+            time.sleep(.5)
+
+    multiplayer = Thread(target=receive, daemon=True).start()
+    ping = Thread(target=server.ping, daemon=True).start()
 
     # Update is better to make some features
     def update():
         global pos_player
-
         # Send player position every change
         if player.position != pos_player:
             server.send(player.to_json_str())
@@ -94,12 +99,9 @@ if __name__ == "__main__":
                 # Calls the function
                 commands[key]()
 
-    game_keys = ("left mouse down", "w", "a", "s", "d", "escape")
     def input(key):
-        global game_keys
-
         # Send every bullet
-        if key in game_keys:
+        if key in ("left mouse down",):
             server.send(player.to_json_str())
 
     game.run()
