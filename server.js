@@ -23,6 +23,7 @@ server.on("connection", client => {
 
   client.on("message", data => {
     data = data.toString();
+
     if (data !== cache) {
       cache = data;
       data = JSON.parse(data);
@@ -40,4 +41,22 @@ server.on("connection", client => {
       });
     }
   });
+
+  client.on("ping", data => {
+    const playerId = data.toString();
+    players[playerId].lastPing = Date.now();
+  });
 });
+
+setInterval(async () => {
+  if (Object.keys(players).length > 0) {
+    Object.values(players).forEach(player => {
+      const timeInactive = Date.now() - player.lastPing;
+      // 5 seconds
+      if (timeInactive > 5000) {
+        delete players[player.id];
+      }
+    });
+  }
+  // 1 second
+}, 1000);

@@ -78,11 +78,11 @@ if __name__ == "__main__":
 
     def send_ping():
         while True:
-            server.ping()
+            server.ping(player.nickname)
             time.sleep(.5)
 
     multiplayer = Thread(target=receive, daemon=True).start()
-    ping = Thread(target=server.ping, daemon=True).start()
+    ping = Thread(target=send_ping, daemon=True).start()
 
     # Update is better to make some features
     def update():
