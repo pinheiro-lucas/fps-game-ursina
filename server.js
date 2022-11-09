@@ -18,20 +18,26 @@ const server = new WebSocketServer(
 
 let players = {};
 
-server.on("connection", stream => {
-  stream.on("message", data => {
-    data = JSON.parse(data.toString());
+server.on("connection", client => {
+  let cache = null;
 
-    if (data.online) {
-      players[data.id] = data;
-    } else {
-      delete players[data.id];
+  client.on("message", data => {
+    data = data.toString();
+    if (data !== cache) {
+      cache = data;
+      data = JSON.parse(data);
+
+      if (data.online) {
+        players[data.id] = data;
+      } else {
+        delete players[data.id];
+      }
+
+      console.log(players);
+
+      server.clients.forEach(client => {
+        client.send(JSON.stringify(players));
+      });
     }
-
-    console.log(players);
-
-    server.clients.forEach(client => {
-      client.send(JSON.stringify(players));
-    });
   });
 });
