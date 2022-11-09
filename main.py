@@ -1,30 +1,23 @@
-import asyncio
-
 from ursina import *
 from ursina.shaders import lit_with_shadows_shader
 
-from websocket import WebSocket
 from dotenv import dotenv_values
 
-import json
 from threading import Thread
+import json
+import os
 
 from src.player import Player
 from src.map import Map
 from src.grappling_hook import Ghook
+from src.client import Server
 from src.enemy import Enemy
 
 if __name__ == "__main__":
     env = dotenv_values()
-
-    DEVELOPMENT_MODE = json.loads(env['DEVELOPMENT_MODE'])
-    SERVER_IP = env['SERVER_IP']
-    SERVER_PORT = env['SERVER_PORT']
+    DEVELOPMENT_MODE = json.loads(env['DEVELOPMENT_MODE']) if os.path.isfile(".env") else False
 
     nickname = input("Nickname: ").capitalize()
-
-    server = WebSocket()
-    server.connect(f"ws://{SERVER_IP}:{SERVER_PORT}")
 
     Entity.default_shader = lit_with_shadows_shader
 
@@ -43,30 +36,26 @@ if __name__ == "__main__":
     player = Player((0, 0, 0), nickname)
     pos_player = player.position
     Ghook((3, 10, 3), player)
-
-    # Todo: Player crash
-    def close():
-        player.online = False
-        server.send(player.to_json_str())
-        exit()
+    server = Server(player)
 
     # All the custom commands here
     commands = {
-        "escape": close,
+        "escape": server.close,
         "left mouse": player.shoot
     }
     # Send connection info
-    server.send(player.to_json_str())
+    server.send_info()
 
     # Multiplayer thread
-    def receive():
+    def network():
         enemies = {}
 
         while True:
             # Update rate
             time.sleep(.01)
             # Receive server information
-            for enemy in json.loads(server.recv()).values():
+            teste = server.receive()
+            for enemy in teste:
                 enemy_id = enemy["id"]
                 if enemy_id != nickname:
                     # Creates/updates each player position
@@ -76,20 +65,16 @@ if __name__ == "__main__":
                         e = Enemy(enemy["pos"])
                         enemies[enemy_id] = e
 
-    def send_ping():
-        while True:
-            server.ping(player.nickname)
-            time.sleep(.5)
 
-    multiplayer = Thread(target=receive, daemon=True).start()
-    ping = Thread(target=send_ping, daemon=True).start()
+    multiplayer = Thread(target=network, daemon=True).start()
+    ping = Thread(target=server.send_ping, daemon=True).start()
 
     # Update is better to make some features
     def update():
         global pos_player
         # Send player position every change
         if player.position != pos_player:
-            server.send(player.to_json_str())
+            server.send_info()
         pos_player = player.position
 
         # key: https://www.ursinaengine.org/cheat_sheet_dark.html#Keys
@@ -102,6 +87,6 @@ if __name__ == "__main__":
     def input(key):
         # Send every bullet
         if key in ("left mouse down",):
-            server.send(player.to_json_str())
+            server.send_info()
 
     game.run()

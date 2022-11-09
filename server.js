@@ -58,5 +58,6 @@ setInterval(async () => {
       }
     });
   }
+  console.log(players)  // Debug
   // 1 second
 }, 1000);
