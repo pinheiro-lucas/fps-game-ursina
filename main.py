@@ -2,10 +2,9 @@ from ursina import *
 from ursina.shaders import lit_with_shadows_shader
 
 from dotenv import dotenv_values
-
 from threading import Thread
+
 import json
-import os
 
 from src.player import Player
 from src.map import Map
@@ -15,7 +14,9 @@ from src.enemy import Enemy
 
 if __name__ == "__main__":
     env = dotenv_values()
-    DEVELOPMENT_MODE = json.loads(env['DEVELOPMENT_MODE']) if os.path.isfile(".env") else False
+    
+    DEVELOPMENT_MODE = json.loads(env.get("DEVELOPMENT_MODE", "false"))
+    FULLSCREEN = json.loads(env.get("FULLSCREEN", "true"))
 
     nickname = input("Nickname: ").capitalize()
 
@@ -24,7 +25,7 @@ if __name__ == "__main__":
     game = Ursina(
         title="Simple FPS Game",
         vsync=True,
-        fullscreen=True,
+        fullscreen=FULLSCREEN,
         borderless=False,
         forced_aspect_ratio=False,
         show_ursina_splash=not DEVELOPMENT_MODE,

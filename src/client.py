@@ -1,19 +1,17 @@
+from dotenv import dotenv_values
 from websocket import WebSocket
 
 import websocket._exceptions as err
 
-from dotenv import dotenv_values
-
 import json
 import time
-import os
 
 
 class Server:
     def __init__(self, player):
         self.env = dotenv_values()
-        self.ip = self.env['SERVER_IP'] if os.path.isfile(".env") else "127.0.0.1"
-        self.port = self.env['SERVER_PORT'] if os.path.isfile(".env") else 3000
+        self.ip = self.env.get("SERVER_IP", "localhost")
+        self.port = self.env.get("SERVER_PORT", 3000)
 
         self.server = WebSocket()
         try:
@@ -31,7 +29,7 @@ class Server:
         except err.WebSocketTimeoutException:
             print("WebSocketTimeoutException")
         except:
-            print("Ruim send")
+            print("Error on sending data to server")
 
     def receive(self):
         try:
@@ -43,7 +41,7 @@ class Server:
             # Todo: Log
             print("WebSocketTimeoutException")
         except:
-            print("Ruim receive")
+            print("Error on recieving data from server")
 
     def close(self):
         self.player.online = False
