@@ -2,7 +2,15 @@ from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
 from ursina.prefabs.health_bar import HealthBar
 
+from random import randint
+
 import json
+
+
+def random_rgb():
+    start = 0
+    end = 255
+    return randint(start, end), randint(start, end), randint(start, end)
 
 
 class Player(FirstPersonController):
@@ -10,6 +18,7 @@ class Player(FirstPersonController):
         # Todo: Nickname box in-game
         self._nickname = nickname
         self.online = True
+        self.rgb = random_rgb()
 
         super().__init__(
             model="cube",
@@ -19,8 +28,8 @@ class Player(FirstPersonController):
             gravity=1,
             fall_after=.2,
             mouse_sensivity=Vec2(40, 40),
-            height=2,
-            position=pos
+            position=pos,
+            color=color.rgb(*self.rgb)
         )
 
         self._hp = 100
@@ -33,7 +42,8 @@ class Player(FirstPersonController):
             parent=camera.ui,
             model="quad",
             texture="../materials/mira.png",
-            scale=.025)
+            scale=.025
+        )
 
         self.health_bar = HealthBar(
             bar_color=color.red,
@@ -81,19 +91,21 @@ class Player(FirstPersonController):
                 position=self.camera_pivot.world_position+Vec3(self.forward.x, 0, self.forward.z),
                 rotation=self.camera_pivot.world_rotation
             )
-            invoke(setattr, self.gun, "on_cooldown", False, delay=1)
+            invoke(setattr, self.gun, "on_cooldown", False, delay=.2)
 
     def to_json_str(self):
         player_info = {
             "id": self._nickname,
             "pos": tuple(self.position),
+            "rot": tuple(self.rotation),
+            "color": tuple(self.rgb),
             "online": self.online
         }
 
         return json.dumps(player_info)
 
 class Bullet(Entity):
-    def __init__(self, speed=1500, lifetime=4,**kwargs):
+    def __init__(self, speed=1000, lifetime=4,**kwargs):
         super().__init__(**kwargs)
         self.speed = speed
         self.lifetime = lifetime

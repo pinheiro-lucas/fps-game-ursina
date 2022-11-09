@@ -14,7 +14,7 @@ from src.enemy import Enemy
 
 if __name__ == "__main__":
     env = dotenv_values()
-    
+
     DEVELOPMENT_MODE = json.loads(env.get("DEVELOPMENT_MODE", "false"))
     FULLSCREEN = json.loads(env.get("FULLSCREEN", "true"))
 
@@ -60,18 +60,19 @@ if __name__ == "__main__":
 
             for enemy in data.values():
                 enemy_id = enemy["id"]
+                enemy["pos"][1] += 1
                 if enemy_id != nickname:
                     # Creates/updates each player position
                     if enemy_id in enemies:
                         enemies[enemy_id].world_position = enemy["pos"]
+                        enemies[enemy_id].rotation = enemy["rot"]
                     else:
-                        enemies[enemy_id] = Enemy(enemy["pos"])
-            
+                        enemies[enemy_id] = Enemy(enemy["pos"], enemy["rot"], enemy["color"])
+
             for enemy_id in list(enemies):
                 if enemy_id not in data.keys():
                     destroy(enemies[enemy_id])
                     del enemies[enemy_id]
-
 
     multiplayer = Thread(target=network, daemon=True).start()
     ping = Thread(target=server.send_ping, daemon=True).start()
