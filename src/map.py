@@ -1,12 +1,13 @@
 from ursina import *
 
-
 class Map:
     def __init__(self):
-        self.ground = Entity(model='plane',
-                             scale=(100, 1, 100),
-                             texture='grass',
-                             texture_scale=(10, 10),
-                             collider='box')
         self.sun = DirectionalLight().look_at(Vec3(1, -1, -1))
         self.sky = Sky(texture="sky_sunset")
+        self.map = Entity(
+            position = (0, -70, 0),
+            model = "models/map.obj",
+            collider = "models/map.obj",
+            texture = "grass",
+            color = color.orange,
+        )
