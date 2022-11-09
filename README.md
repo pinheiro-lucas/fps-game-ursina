@@ -16,5 +16,5 @@
 
 ## More about Ursina:
 
-- https://www.ursinaengine.org
-- https://www.ursinaengine.org/cheat_sheet_dark.html
+- [https://www.ursinaengine.org](https://www.ursinaengine.org)
+- [https://www.ursinaengine.org/cheat_sheet_dark.html](https://www.ursinaengine.org/cheat_sheet_dark.html)
