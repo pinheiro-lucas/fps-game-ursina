@@ -101,7 +101,12 @@ class Player(FirstPersonController):
             "color": tuple(self.rgb)
         }
 
-        return json.dumps(player_info)
+        payload = {
+            "type": "player",
+            "payload": player_info
+        }
+
+        return json.dumps(payload)
 
 
 class Bullet(Entity):

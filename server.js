@@ -25,6 +25,25 @@ function sendAll(payload) {
   console.log(payload);
 }
 
+/*
+data = {
+  type: "player" | "bullet" | "watcher",
+  payload: {
+    // Player payload
+    id: string,
+    hp: number,
+    pos: number[],
+    rot: number[],
+    color: number[]
+
+    // Bullet payload
+    origin: string (player id),
+    target: string (player id),
+    hit: boolean
+  }
+}
+*/
+
 server.on("connection", client => {
   let cache = undefined;
   let playerId = undefined;
@@ -35,16 +54,29 @@ server.on("connection", client => {
     if (data !== cache) {
       cache = data;
       data = JSON.parse(data);
+      const payload = data.payload ?? {};
 
-      if (playerId === undefined) {
-        playerId = data.id;
+      switch (data.type) {
+        // Player connection
+        case "player":
+          if (playerId === undefined) {
+            playerId = payload.id;
+          }
+
+          players[playerId] = payload;
+          sendAll(players);
+
+          break;
+
+        // Bullet connection
+        case "bullet":
+          break;
+
+        // Watcher connection
+        case "watcher":
+          client.send(JSON.stringify(players));
+          break;
       }
-
-      if (data.online) {
-        players[playerId] = data;
-      }
-
-      sendAll(players);
     }
   });
 
