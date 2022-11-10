@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ursina Multiplayer FPS</title>
+    <link rel="stylesheet" href="css/index.css" />
+    <script src="js/index.js" defer></script>
+  </head>
+  <body>
+    <canvas width="600" height="600"></canvas>
+    <div>
+      <form>
+        <input
+          type="url"
+          id="input-server"
+          placeholder="Endereço do servidor"
+          value="ws://localhost:3000"
+        />
+        <button type="submit">Conectar</button>
+      </form>
+      <ul id="player-list"></ul>
+    </div>
+  </body>
+</html>
