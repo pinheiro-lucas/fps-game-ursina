@@ -17,7 +17,6 @@ class Player(FirstPersonController):
     def __init__(self, pos, nickname):
         # Todo: Nickname box in-game
         self._nickname = nickname
-        self.online = True
         self.rgb = random_rgb()
 
         self.p = super().__init__(
@@ -99,8 +98,7 @@ class Player(FirstPersonController):
             "id": self._nickname,
             "pos": tuple(self.position),
             "rot": tuple(self.rotation),
-            "color": tuple(self.rgb),
-            "online": self.online
+            "color": tuple(self.rgb)
         }
 
         return json.dumps(player_info)
