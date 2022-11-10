@@ -4,7 +4,6 @@ from websocket import WebSocket
 import websocket._exceptions as err
 
 import json
-import time
 
 
 class Server:
@@ -47,11 +46,3 @@ class Server:
         self.player.online = False
         self.send_info()
         exit()
-
-    def send_ping(self):
-        while True:
-            try:
-                self.server.ping(self.player.nickname)
-                time.sleep(.5)
-            except:
-                self.close()

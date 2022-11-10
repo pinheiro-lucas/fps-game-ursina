@@ -78,7 +78,6 @@ if __name__ == "__main__":
                     del enemies[enemy_id]
 
     multiplayer = Thread(target=network, daemon=True).start()
-    ping = Thread(target=server.send_ping, daemon=True).start()
 
     # First respawn spot
     data = server.receive()

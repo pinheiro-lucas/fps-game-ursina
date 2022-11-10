@@ -17,10 +17,17 @@ const server = new WebSocketServer(
 );
 
 let players = {};
-let online = {};
+
+function sendAll(payload) {
+  server.clients.forEach(client => {
+    client.send(JSON.stringify(payload));
+  });
+  console.log(payload);
+}
 
 server.on("connection", client => {
   let cache = undefined;
+  let playerId = undefined;
 
   client.on("message", data => {
     data = data.toString();
@@ -29,44 +36,22 @@ server.on("connection", client => {
       cache = data;
       data = JSON.parse(data);
 
-      if (data.online) {
-        players[data.id] = data;
-      } else {
-        delete players[data.id];
+      if (playerId === undefined) {
+        playerId = data.id;
       }
 
-      // console.log(players);
+      if (data.online) {
+        players[playerId] = data;
+      }
 
-      server.clients.forEach(client => {
-        client.send(JSON.stringify(players));
-      });
+      sendAll(players);
     }
   });
 
-  client.on("ping", data => {
-    const playerId = data.toString();
-    online[playerId] = Date.now();
+  client.on("close", () => {
+    if (playerId !== undefined) {
+      delete players[playerId];
+      sendAll(players);
+    }
   });
 });
-
-setInterval(async () => {
-  if (Object.keys(online).length > 0) {
-    for (const [playerId, lastPing] of Object.entries(online)) {
-      const timeInactive = Date.now() - lastPing;
-
-      // 5 seconds
-      if (timeInactive > 5000) {
-        delete online[playerId];
-        if (Object.keys(players).includes(playerId)) {
-          delete players[playerId];
-        }
-      }
-    }
-  }
-
-  // Debug
-  console.log(players);
-  console.log(online);
-
-  // 1 second
-}, 1000);
