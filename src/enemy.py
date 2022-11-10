@@ -2,16 +2,16 @@ from ursina import *
 
 
 class Enemy(Entity):
-    def __init__(self, pos, rot, rgb):
-        super().__init__(
+    def __init__(self, pos, rot, name, rgb):
+        self.e = super().__init__(
+            name=name,
             world_position=pos,
             rotation=rot,
             color=color.rgb(*rgb),
             model="cube",
-            scale=(1, 2, 1)
+            scale=(1, 2, 1),
+            collider="box"
         )
-
-        # self.collider = BoxCollider(self, (0, 1, 0), (1, 2, 1))
 
         self.gun = Entity(
             parent=self,

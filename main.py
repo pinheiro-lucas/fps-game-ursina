@@ -23,18 +23,22 @@ if __name__ == "__main__":
     Entity.default_shader = lit_with_shadows_shader
 
     game = Ursina(
-        title="Simple FPS Game",
+        title="Multiplayer FPS",
         vsync=True,
         fullscreen=FULLSCREEN,
         borderless=False,
         forced_aspect_ratio=False,
         show_ursina_splash=not DEVELOPMENT_MODE,
         development_mode=DEVELOPMENT_MODE,
-        editor_ui_enabled=DEVELOPMENT_MODE
+        editor_ui_enabled=DEVELOPMENT_MODE,
+        fps_counter=True
     )
 
     game.map = Map()
-    player = Player((0, 0, 0), nickname)
+    # Map respawn spots
+    respawns = ((0, 0, 0), (1, 0, 1), (2, 0, 2), (3, 0, 3), (4, 0, 4),
+                (-1, 0, -1), (-2, 0, -2), (-3, 0, -3), (-4, 0, -4))
+    player = Player((0, -100, 0), nickname)
     pos_player = player.position
     Ghook((3, 10, 3), player)
     server = Server(player)
@@ -50,7 +54,6 @@ if __name__ == "__main__":
     # Multiplayer thread
     def network():
         enemies = {}
-
         while True:
             # Update rate
             time.sleep(.01)
@@ -67,7 +70,7 @@ if __name__ == "__main__":
                         enemies[enemy_id].world_position = enemy["pos"]
                         enemies[enemy_id].rotation = enemy["rot"]
                     else:
-                        enemies[enemy_id] = Enemy(enemy["pos"], enemy["rot"], enemy["color"])
+                        enemies[enemy_id] = Enemy(enemy["pos"], enemy["rot"], enemy_id, enemy["color"])
 
             for enemy_id in list(enemies):
                 if enemy_id not in data.keys():
@@ -76,6 +79,10 @@ if __name__ == "__main__":
 
     multiplayer = Thread(target=network, daemon=True).start()
     ping = Thread(target=server.send_ping, daemon=True).start()
+
+    # First respawn spot
+    data = server.receive()
+    player.world_position = respawns[list(data).index(nickname)]
 
     # Update is better to make some features
     def update():

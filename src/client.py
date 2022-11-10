@@ -17,7 +17,7 @@ class Server:
         try:
             self.server.connect(f"ws://{self.ip}:{self.port}")
         except ConnectionError:
-            print("Erro ao se conectar ao Servidor")
+            print("Can't reach the host")
 
         self.player = player
 
@@ -41,7 +41,7 @@ class Server:
             # Todo: Log
             print("WebSocketTimeoutException")
         except:
-            print("Error on recieving data from server")
+            print("Error receiving data from server")
 
     def close(self):
         self.player.online = False

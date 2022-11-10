@@ -20,7 +20,7 @@ class Player(FirstPersonController):
         self.online = True
         self.rgb = random_rgb()
 
-        super().__init__(
+        self.p = super().__init__(
             model="cube",
             speed=15,
             jump_height=2,
@@ -85,13 +85,14 @@ class Player(FirstPersonController):
             self.gun.on_cooldown = True
             self.gun.blink(color.orange)
             Bullet(
+                self.p,
                 model="sphere",
-                scale=0.05,
+                scale=.2,
                 color=color.black,
                 position=self.camera_pivot.world_position+Vec3(self.forward.x, 0, self.forward.z),
                 rotation=self.camera_pivot.world_rotation
             )
-            invoke(setattr, self.gun, "on_cooldown", False, delay=.2)
+            invoke(setattr, self.gun, "on_cooldown", False, delay=.15)
 
     def to_json_str(self):
         player_info = {
@@ -104,16 +105,25 @@ class Player(FirstPersonController):
 
         return json.dumps(player_info)
 
+
 class Bullet(Entity):
-    def __init__(self, speed=1000, lifetime=4,**kwargs):
+    def __init__(self, player, speed=100, lifetime=4, **kwargs):
         super().__init__(**kwargs)
+        self.player = player
         self.speed = speed
         self.lifetime = lifetime
         self.start = time.time()
 
     def update(self):
-        ray = raycast(self.world_position, self.forward, distance=self.speed*time.dt, ignore=[self, 'player'])
-        if not ray.hit and  time.time() - self.start < self.lifetime:
-            self.world_position += self.forward * self.speed * time.dt
-        else:
+        ray = raycast(self.world_position, self.forward, distance=self.speed*time.dt, ignore=(self, self.player,))
+
+        time_left = time.time() - self.start
+
+        if ray.hit or time_left > self.lifetime:
+            # Object that have been hit
+            hit = ray.entity
+            if hit is not None:
+                print(hit)
             destroy(self)
+        else:
+            self.world_position += self.forward * self.speed * time.dt
