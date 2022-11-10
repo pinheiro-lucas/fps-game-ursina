@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     # All the custom commands here
     commands = {
-        "escape": server.close,
+        "escape": exit,
         "left mouse": player.shoot
     }
     # Send connection info
@@ -89,7 +89,7 @@ if __name__ == "__main__":
         # Send player position every change
         if player.position != pos_player:
             server.send_info()
-        pos_player = player.position
+            pos_player = player.position
 
         # key: https://www.ursinaengine.org/cheat_sheet_dark.html#Keys
         # value: 0 or 1 (1 is pressed)

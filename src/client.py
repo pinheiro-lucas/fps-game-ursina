@@ -41,8 +41,3 @@ class Server:
             print("WebSocketTimeoutException")
         except:
             print("Error receiving data from server")
-
-    def close(self):
-        self.player.online = False
-        self.send_info()
-        exit()
