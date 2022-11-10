@@ -90,6 +90,10 @@ if __name__ == "__main__":
         if player.position != pos_player:
             server.send_info()
             pos_player = player.position
+        
+        # Send player info on mouse change
+        if mouse.moving:
+            server.send_info()
 
         # key: https://www.ursinaengine.org/cheat_sheet_dark.html#Keys
         # value: 0 or 1 (1 is pressed)
