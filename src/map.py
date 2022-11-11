@@ -11,4 +11,5 @@ class Map:
             collider="models/map.obj",
             texture="grass",
             color=color.orange,
+            scale=7
         )
