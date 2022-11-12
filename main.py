@@ -3,6 +3,7 @@ from ursina.shaders import lit_with_shadows_shader
 
 from dotenv import dotenv_values
 from threading import Thread
+from random import choice
 
 import json
 
@@ -36,10 +37,10 @@ if __name__ == "__main__":
 
     game.map = Map()
     # Map respawn spots
-    respawns = ((-18, -2, -1), (61, -5, 5), (22, 1.5, 58), (81, 1.5, 73), (5.5, -2, 75),
-                (-23, -2, 70), (-82, 1.5, 75), (-82, 0.5, 9), (-77, -2, -19), (-27, -2, -22),
-                (-31.5, -2, 18.5), (75, 1.5, -70), (30, -2, -79.5), (-29, 2, -78.5), (0.5, -2, -35.5))
-    player = Player(nickname)
+    respawns = [(-18, -2.5, -1), (61, -5.5, 5), (22, 2, 58), (81, 2, 73), (5.5, -2.5, 75),
+                (-23, -2.5, 70), (-82, 2, 75), (-82, 1, 9), (-77, -2.5, -19), (-27, -2.5, -22),
+                (-31.5, -2.5, 18.5), (75, 2, -70), (30, -2.5, -79.5), (-29, 2.5, -78.5), (0.5, -2.5, -35.5)]
+    player = Player(nickname, choice(respawns))
     pos_player = player.position
     Ghook((3, 10, 3), player)
     server = Server(player)
@@ -82,7 +83,6 @@ if __name__ == "__main__":
 
     # First respawn spot
     data = server.receive()
-    player.world_position = respawns[list(data).index(nickname)]
 
     # Update is better to make some features
     def update():

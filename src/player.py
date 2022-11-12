@@ -14,9 +14,10 @@ def random_rgb():
 
 
 class Player(FirstPersonController):
-    def __init__(self, nickname, pos=(0, 0, 0)):
+    def __init__(self, nickname, pos):
         # Todo: Nickname box in-game
         self._nickname = nickname
+        self.pos = pos
         self.rgb = random_rgb()
 
         self.p = super().__init__(
