@@ -5,13 +5,13 @@ const serverInput = document.querySelector("#input-server");
 
 const ctx = canvas.getContext("2d");
 
-const mapSize = 130;
+const mapSize = 172;
 const playerSize = 25;
 const mapFix = canvas.width / 2 - playerSize / 2;
 
 function drawPlayer(x, y, color) {
   ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-  ctx.fillRect(x * 2 + mapFix, y * 2 + mapFix, playerSize, playerSize);
+  ctx.fillRect(x * 3 + mapFix, y * 3 + mapFix, playerSize, playerSize);
 }
 
 form.addEventListener("submit", event => {

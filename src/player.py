@@ -111,7 +111,7 @@ class Player(FirstPersonController):
 
 
 class Bullet(Entity):
-    def __init__(self, player, speed=100, lifetime=4, **kwargs):
+    def __init__(self, player, speed=100, lifetime=7, **kwargs):
         super().__init__(**kwargs)
         self.player = player
         self.speed = speed
@@ -125,8 +125,8 @@ class Bullet(Entity):
 
         if ray.hit or time_left > self.lifetime:
             # Object that have been hit
-            hit = ray.entity
-            if hit is not None:
+            hit = str(ray.entity)
+            if hit not in ("None", "map", "player"):
                 print(hit)
             destroy(self)
         else:

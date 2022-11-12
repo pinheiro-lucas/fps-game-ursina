@@ -89,6 +89,9 @@ if __name__ == "__main__":
         global pos_player
         # Send player position every change
         if player.position != pos_player:
+            # Check if player falls from the map
+            if player.world_y <= -5:
+                player.world_position = choice(respawns)
             server.send_info()
             pos_player = player.position
         
