@@ -71,7 +71,11 @@ if __name__ == "__main__":
                     else:
                         enemies[enemy_id] = Enemy(enemy["pos"], enemy["rot"], enemy_id, enemy["color"])
                 else:
-                    player.hp = enemy["hp"]
+                    if enemy["hp"] > 0:
+                        player.hp = enemy["hp"]
+                    else:
+                        player.world_position = choice(respawns)
+                        player.hp = 100
 
             for enemy_id in list(enemies):
                 if enemy_id not in data.keys():

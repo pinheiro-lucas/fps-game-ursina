@@ -20,15 +20,9 @@ const server = new WebSocketServer(
 
 // Global objects to store game data
 let players = {};
-
-let hp = {};
-
 let score = {};
 
 // Global functions
-
-function appendDefaultValues() {}
-
 function sendAll(payload) {
   // Send the payload to all connected clients
   server.clients.forEach(client => {
@@ -84,14 +78,11 @@ server.on("connection", client => {
           if (playerId === undefined) {
             playerId = payload.id;
 
-            hp[playerId] = 100;
             score[playerId] = 0;
           }
 
           // Populate global players object
           players[playerId] = payload;
-
-          players[playerId].hp = hp[playerId];
           players[playerId].score = score[playerId];
 
           // Send data to all clients on each player message
@@ -105,12 +96,12 @@ server.on("connection", client => {
           const damage = 20;
 
           // Apply damage to target player
-          if (Object.keys(hp).includes(target)) {
-            hp[target] -= damage;
+          if (Object.keys(players).includes(target)) {
+            players[target].hp -= damage;
 
             // Check target player death
-            if (hp[target] <= 0) {
-              hp[target] = 0;
+            if (players[target].hp <= 0) {
+              players[target].hp = 0;
 
               // Update score
               if (Object.keys(score).includes(origin)) {
@@ -118,8 +109,6 @@ server.on("connection", client => {
                 players[origin].score = score[origin];
               }
             }
-
-            players[target].hp = hp[target];
           }
 
           sendAll(players);
@@ -138,7 +127,6 @@ server.on("connection", client => {
     if (playerId !== undefined) {
       // Remove player from server and notify clients
       delete players[playerId];
-      delete hp[playerId];
       delete score[playerId];
 
       sendAll(players);

@@ -102,7 +102,8 @@ class Player(FirstPersonController):
             "id": self._nickname,
             "pos": tuple(self.position),
             "rot": tuple(self.rotation),
-            "color": tuple(self.rgb)
+            "color": tuple(self.rgb),
+            "hp": self._hp
         }
 
         payload = {
