@@ -59,7 +59,8 @@ class Player(FirstPersonController):
             parent=camera.ui,
             position=Vec2(.6, -.5),
             scale=Vec3(.2, .2, .2),
-            rotation=Vec3(10, 20, 5),
+            rotation_y=156,
+            rotation_x=373,
             model="models/ak47.obj",
             color=color.gray,
             on_cooldown=False
@@ -91,7 +92,7 @@ class Player(FirstPersonController):
                 player=self,
                 model="sphere",
                 scale=.2,
-                color=color.black,
+                color=color.red,
                 position=self.camera_pivot.world_position+Vec3(self.forward.x, 0, self.forward.z),
                 rotation=self.camera_pivot.world_rotation
             )
