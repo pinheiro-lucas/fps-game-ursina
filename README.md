@@ -6,11 +6,11 @@
 
 - Copy `.env.template` to `.env`
 
-- Server:
+- Client:
   - `npm i`
   - `npm start`
 
-- Client:
+- Server:
   - `pip install -r requirements.txt`
   - `python main.py`
 
