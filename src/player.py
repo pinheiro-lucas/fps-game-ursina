@@ -70,6 +70,7 @@ class Player(FirstPersonController):
     @hp.setter
     def hp(self, n):
         self._hp = n
+        self.health_bar.value = self._hp
 
     @property
     def nickname(self):

@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
     game = Ursina(
         title="Multiplayer FPS",
-        vsync=True,
+        vsync=False,
         fullscreen=FULLSCREEN,
         borderless=False,
         forced_aspect_ratio=False,
@@ -73,6 +73,8 @@ if __name__ == "__main__":
                         enemies[enemy_id].rotation = enemy["rot"]
                     else:
                         enemies[enemy_id] = Enemy(enemy["pos"], enemy["rot"], enemy_id, enemy["color"])
+                else:
+                    player.hp = enemy["hp"]
 
             for enemy_id in list(enemies):
                 if enemy_id not in data.keys():

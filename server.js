@@ -78,7 +78,7 @@ server.on("connection", client => {
       const payload = data.payload ?? {};
 
       switch (data.type) {
-        // Player connection
+        // Player message
         case "player":
           // Initialize client variables
           if (playerId === undefined) {
@@ -98,7 +98,7 @@ server.on("connection", client => {
           sendAll(players);
           break;
 
-        // Hit connection
+        // Hit message
         case "hit":
           // Hit variables
           const { origin, target } = payload;
@@ -125,7 +125,7 @@ server.on("connection", client => {
           sendAll(players);
           break;
 
-        // Watcher connection
+        // Watcher message
         case "watcher":
           // Send initial payload only to the watcher client
           client.send(JSON.stringify(players));
