@@ -19,6 +19,8 @@ form.addEventListener("submit", event => {
 
   const socket = new WebSocket(serverInput.value);
 
+  window.socket = socket;
+
   socket.addEventListener("open", () => {
     console.log("CONECTADO");
 
@@ -44,10 +46,10 @@ form.addEventListener("submit", event => {
     const playerListChildren = [];
 
     Object.values(data).forEach(player => {
-      const { id, hp, pos, rot, color } = player;
+      const { id, hp, score, pos, rot, color } = player;
 
       const li = document.createElement("li");
-      li.innerHTML = id;
+      li.innerHTML = `${id} - HP: ${hp}`;
       li.style.color = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
       li.style.fontWeight = "bold";
 
