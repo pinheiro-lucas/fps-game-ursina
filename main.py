@@ -1,7 +1,6 @@
 from ursina import *
 from ursina.shaders import lit_with_shadows_shader
 
-from dotenv import dotenv_values
 from threading import Thread
 from random import choice
 
@@ -10,12 +9,11 @@ import json
 from src.player import Player
 from src.map import Map
 from src.grappling_hook import Ghook
-from src.client import Server
 from src.enemy import Enemy
 
-if __name__ == "__main__":
-    env = dotenv_values()
+from config import env, server
 
+if __name__ == "__main__":
     DEVELOPMENT_MODE = json.loads(env.get("DEVELOPMENT_MODE", "false"))
     FULLSCREEN = json.loads(env.get("FULLSCREEN", "true"))
 
@@ -43,7 +41,6 @@ if __name__ == "__main__":
     player = Player(nickname, choice(respawns))
     pos_player = player.position
     Ghook((3, 10, 3), player)
-    server = Server(player)
 
     # All the custom commands here
     commands = {
@@ -51,7 +48,7 @@ if __name__ == "__main__":
         "left mouse": player.shoot
     }
     # Send connection info
-    server.send_info()
+    server.send_info(player)
 
     # Multiplayer thread
     def network():
@@ -94,12 +91,12 @@ if __name__ == "__main__":
             # Check if player falls from the map
             if player.world_y <= -5:
                 player.world_position = choice(respawns)
-            server.send_info()
+            server.send_info(player)
             pos_player = player.position
         
         # Send player info on mouse change
         if mouse.moving:
-            server.send_info()
+            server.send_info(player)
 
         # key: https://www.ursinaengine.org/cheat_sheet_dark.html#Keys
         # value: 0 or 1 (1 is pressed)
@@ -111,6 +108,6 @@ if __name__ == "__main__":
     def input(key):
         # Send every bullet
         if key in ("left mouse down",):
-            server.send_info()
+            server.send_info(player)
 
     game.run()

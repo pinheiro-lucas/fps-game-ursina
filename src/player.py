@@ -6,6 +6,8 @@ from random import randint
 
 import json
 
+from config import server
+
 
 def random_rgb():
     start = 0
@@ -86,7 +88,7 @@ class Player(FirstPersonController):
             self.gun.on_cooldown = True
             self.gun.blink(color.orange)
             Bullet(
-                self.p,
+                player=self,
                 model="sphere",
                 scale=.2,
                 color=color.black,
@@ -112,7 +114,7 @@ class Player(FirstPersonController):
 
 
 class Bullet(Entity):
-    def __init__(self, player, speed=100, lifetime=7, **kwargs):
+    def __init__(self, player: Player, speed=100, lifetime=7, **kwargs):
         super().__init__(**kwargs)
         self.player = player
         self.speed = speed
@@ -128,7 +130,13 @@ class Bullet(Entity):
             # Object that have been hit
             hit = str(ray.entity)
             if hit not in ("None", "map", "player"):
-                print(hit)
+                server.send_bullet({
+                    "type": "hit",
+                    "payload": {
+                        "origin": self.player.nickname,
+                        "target": hit
+                    }
+                })
             destroy(self)
         else:
             self.world_position += self.forward * self.speed * time.dt
