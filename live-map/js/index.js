@@ -49,7 +49,7 @@ form.addEventListener("submit", event => {
       const { id, hp, score, pos, rot, color } = player;
 
       const li = document.createElement("li");
-      li.innerHTML = `${id} - HP: ${hp}`;
+      li.innerHTML = `${id} - HP: ${hp} - Score: ${score}`;
       li.style.color = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
       li.style.fontWeight = "bold";
 

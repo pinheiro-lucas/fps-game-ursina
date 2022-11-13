@@ -42,6 +42,8 @@ if __name__ == "__main__":
     pos_player = player.position
     Ghook((3, 10, 3), player)
 
+    score_text = Text("", position=(-.85, .45))
+
     # All the custom commands here
     commands = {
         "escape": exit,
@@ -81,6 +83,12 @@ if __name__ == "__main__":
                 if enemy_id not in data.keys():
                     destroy(enemies[enemy_id])
                     del enemies[enemy_id]
+            
+            # Update score
+            score_text.text = "\n".join(list(map(
+                lambda x: f"{x['id']}: {x['score']}",
+                data.values()
+            )))
 
     multiplayer = Thread(target=network, daemon=True).start()
 
