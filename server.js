@@ -1,3 +1,6 @@
+const http = require("http");
+const fs = require("fs");
+const path = require("path");
 const { WebSocketServer } = require("ws");
 
 // Parse .env file
@@ -8,22 +11,29 @@ const serverInfo = {
   port: process.env.SERVER_PORT ?? 3000,
 };
 
+// Create HTTP server
+const server = http.createServer((req, res) => {
+  console.log(req.url);
+  fs.readFile(
+    path.join(__dirname, "live-map", req.url === "/" ? "/index.html" : req.url),
+    (err, data) => {
+      if (err) {
+        res.writeHead(404);
+        res.end(`Error opening ${req.url}`);
+        return;
+      }
+      res.writeHead(200);
+      res.end(data);
+    }
+  );
+});
+
 // Create WebSocket server
-const server = new WebSocketServer(
-  {
-    port: serverInfo.port,
-  },
-  () => {
-    console.log(`ws://${serverInfo.ip}:${serverInfo.port}`);
-  }
-);
+const ws = new WebSocketServer({ server });
 
 // Global objects to store game data
 let players = {};
 let score = {};
-
-// Debug
-setInterval(() => console.log(players), 1000);
 
 /*
 Sever payload
@@ -50,7 +60,7 @@ data = {
 }
 */
 
-server.on("connection", client => {
+ws.on("connection", client => {
   // Define client variables
   let cache = undefined;
   let playerId = undefined;
@@ -152,4 +162,13 @@ server.on("connection", client => {
       delete score[playerId];
     }
   });
+});
+
+server.listen(serverInfo.port, () => {
+  const host = `${serverInfo.ip}:${serverInfo.port}`;
+  console.log(`[*] WS => ws://${host}`);
+  console.log(`[*] Map => http://${host}`);
+
+  // Debug
+  setInterval(() => console.log(players), 1000);
 });
