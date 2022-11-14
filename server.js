@@ -104,7 +104,7 @@ ws.on("connection", client => {
       case "hit": {
         // Hit variables
         const { origin, target } = payload;
-        const damage = 34;
+        const damage = 50;
 
         // Apply damage to target player
         if (Object.keys(players).includes(target)) {
