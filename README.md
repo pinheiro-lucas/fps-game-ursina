@@ -1,18 +1,21 @@
-# Simple FPS Game
+# Multiplayer FPS Game
 
-- Using Ursina (Python)
+- Multiplayer FPS game using Ursina Engine (Python)
+- Server made with javascript (easier to work with websocket)
 
 ## How to use:
 
-- Copy `.env.template` to `.env`
+- Setup `.env` (with `.env.template` example)
 
-- Server:
-  - `npm i`
-  - `npm start`
-
-- Client:
-  - `pip install -r requirements.txt`
-  - `python main.py`
+### Server:
+```bash
+  npm i && npm start
+```
+### Client:
+```bash
+  pip install -r requirements.txt
+  python main.py
+```
 
 ## More about Ursina:
 
