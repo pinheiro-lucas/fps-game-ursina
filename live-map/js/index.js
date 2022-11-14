@@ -44,7 +44,9 @@ form.addEventListener("submit", event => {
 
     form.appendChild(connected);
 
-    setInterval(() => socket.send(JSON.stringify({ type: "watcher" })), 1000);
+    setInterval(() => {
+      socket.send(JSON.stringify({ type: "watcher" }));
+    }, 1000);
   });
 
   socket.addEventListener("message", ({ data }) => {
