@@ -18,7 +18,7 @@ class Server:
         except ConnectionError:
             print("Can't reach the host")
 
-    def send_info(self, player):
+    def send_player_info(self, player):
         try:
             self.server.send(player.to_json_str())
         except err.WebSocketConnectionClosedException:
@@ -28,9 +28,9 @@ class Server:
         except:
             print("Error on sending data to server")
     
-    def send_bullet(self, bullet):
+    def send(self, payload: dict[str]):
         try:
-            self.server.send(json.dumps(bullet))
+            self.server.send(json.dumps(payload))
         except err.WebSocketConnectionClosedException:
             print("WebSocketConnectionClosedException")
         except err.WebSocketTimeoutException:
@@ -40,6 +40,7 @@ class Server:
 
     def receive(self) -> dict[str] | None:
         try:
+            self.send({ "type": "watcher" })
             return json.loads(self.server.recv())
         except err.WebSocketConnectionClosedException:
             # Todo: Log

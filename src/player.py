@@ -95,7 +95,7 @@ class Player(FirstPersonController):
                 position=pos,
                 rotation=rot
             )
-            server.send_bullet({
+            server.send({
                 "type": "bullet",
                 "payload": {
                     "origin": self.nickname,
@@ -145,7 +145,7 @@ class Bullet(Entity):
             # Object that have been hit
             hit = str(ray.entity)
             if not self.ignore_collision and hit not in ("None", "map", "player"):
-                server.send_bullet({
+                server.send({
                     "type": "hit",
                     "payload": {
                         "origin": self.player.nickname,

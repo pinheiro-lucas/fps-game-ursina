@@ -56,7 +56,7 @@ if __name__ == "__main__":
     }
 
     # Send connection info
-    server.send_info(player)
+    server.send_player_info(player)
 
     # Multiplayer thread
     def network():
@@ -151,12 +151,12 @@ if __name__ == "__main__":
             # Check if player falls from the map
             if player.world_y <= -5:
                 player.world_position = choice(respawns)
-            server.send_info(player)
+            server.send_player_info(player)
             pos_player = player.position
 
         # Send player info on mouse change
         if mouse.moving:
-            server.send_info(player)
+            server.send_player_info(player)
 
         # key: https://www.ursinaengine.org/cheat_sheet_dark.html#Keys
         # value: 0 or 1 (1 is pressed)
@@ -169,6 +169,6 @@ if __name__ == "__main__":
         # Send every bullet
         if key == "left mouse down":
             player.shoot()
-            server.send_info(player)
+            server.send_player_info(player)
 
     game.run()
