@@ -148,6 +148,9 @@ ws.on("connection", client => {
           players[playerId].bullet = bullets[playerId];
         }
         client.send(JSON.stringify(players));
+        if (playerId !== undefined) {
+          delete players[playerId].bullet;
+        }
         break;
       }
     }
@@ -158,6 +161,7 @@ ws.on("connection", client => {
       // Remove player from server and notify clients
       delete players[playerId];
       delete score[playerId];
+      delete bullets[playerId];
     }
   });
 });
