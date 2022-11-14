@@ -34,7 +34,6 @@ const ws = new WebSocketServer({ server });
 // Global objects to store game data
 let players = {};
 let score = {};
-let bullets = {};
 
 /*
 Sever payload
@@ -105,7 +104,7 @@ ws.on("connection", client => {
       case "hit": {
         // Hit variables
         const { origin, target } = payload;
-        const damage = 20;
+        const damage = 34;
 
         // Apply damage to target player
         if (Object.keys(players).includes(target)) {
@@ -127,12 +126,13 @@ ws.on("connection", client => {
       }
 
       // Bullet message
+      /*
       case "bullet": {
         // Parse bullet payload
         const { origin, pos, rot } = payload;
 
         if (Object.keys(players).includes(origin)) {
-          bullets[origin] = {
+          players[origin].bullet = {
             pos: pos,
             rot: rot,
           };
@@ -140,17 +140,12 @@ ws.on("connection", client => {
 
         break;
       }
+      */
 
       // Watcher message
       case "watcher": {
         // Send initial payload only to the watcher client
-        if (playerId !== undefined) {
-          players[playerId].bullet = bullets[playerId];
-        }
         client.send(JSON.stringify(players));
-        if (playerId !== undefined) {
-          delete players[playerId].bullet;
-        }
         break;
       }
     }
@@ -161,7 +156,6 @@ ws.on("connection", client => {
       // Remove player from server and notify clients
       delete players[playerId];
       delete score[playerId];
-      delete bullets[playerId];
     }
   });
 });
