@@ -39,6 +39,7 @@ if __name__ == "__main__":
                 (-23, -2.5, 70), (-82, 2, 75), (-82, 1, 9), (-77, -2.5, -19), (-27, -2.5, -22),
                 (-31.5, -2.5, 18.5), (75, 2, -70), (30, -2.5, -79.5), (-29, 2.5, -78.5), (0.5, -2.5, -35.5)]
     player = Player(nickname, choice(respawns))
+    enemies = {}
     pos_player = player.position
     Ghook((3, 10, 3), player)
 
@@ -54,7 +55,7 @@ if __name__ == "__main__":
 
     # Multiplayer thread
     def network():
-        enemies = {}
+        global enemies
         while True:
             # Update rate
             time.sleep(.01)
@@ -82,6 +83,7 @@ if __name__ == "__main__":
                         player.hp = 100
 
     def network_aux():
+        global enemies
         while True:
             # Update rate
             time.sleep(.5)
