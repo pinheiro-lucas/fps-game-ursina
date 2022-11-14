@@ -12,12 +12,16 @@ def on_error(error):
 class Server:
     def __init__(self):
         self.env = dotenv_values()
+        self.ssl = self.env.get("SERVER_SSL", False)
         self.ip = self.env.get("SERVER_IP", "localhost")
         self.port = self.env.get("SERVER_PORT", 3000)
 
         self.server = WebSocket()
         try:
-            self.server.connect(f"ws://{self.ip}:{self.port}")
+            if self.ssl:
+                self.server.connect(f"wss://{self.ip}")
+            else:
+                self.server.connect(f"ws://{self.ip}:{self.port}")
         except Exception as err:
             on_error(err)
 
