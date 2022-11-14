@@ -52,7 +52,7 @@ if __name__ == "__main__":
     # All the custom commands here
     commands = {
         "escape": exit,
-        "left mouse": player.shoot
+        # "left mouse": player.shoot
     }
 
     # Send connection info
@@ -159,7 +159,8 @@ if __name__ == "__main__":
 
     def input(key):
         # Send every bullet
-        if key in ("left mouse down",):
+        if key == "left mouse down":
+            player.shoot()
             server.send_info(player)
 
     game.run()
