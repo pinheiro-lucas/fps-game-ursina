@@ -9,6 +9,8 @@ const mapSize = 172;
 const playerSize = 25;
 const mapFix = canvas.width / 2 - playerSize / 2;
 
+serverInput.value = localStorage.getItem("ws-fps-url") ?? "ws://localhost:3000";
+
 function drawPlayer(x, y, color) {
   ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
   ctx.fillRect(x * 3 + mapFix, y * 3 + mapFix, playerSize, playerSize);
@@ -16,6 +18,8 @@ function drawPlayer(x, y, color) {
 
 form.addEventListener("submit", event => {
   event.preventDefault();
+
+  localStorage.setItem("ws-fps-url", serverInput.value ?? "");
 
   const socket = new WebSocket(serverInput.value);
 
