@@ -11,9 +11,14 @@ const mapFix = canvas.width / 2 - playerSize / 2;
 
 serverInput.value = localStorage.getItem("ws-fps-url") ?? "ws://localhost:3000";
 
-function drawPlayer(x, y, color) {
+function drawPlayer(x, y, color, name) {
+  x = x * 3 + mapFix;
+  y = y * 3 + mapFix;
   ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-  ctx.fillRect(x * 3 + mapFix, y * 3 + mapFix, playerSize, playerSize);
+  ctx.font = "bold 18px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(name, x, y - playerSize / 2.5);
+  ctx.fillRect(x, y, playerSize, playerSize);
 }
 
 form.addEventListener("submit", event => {
@@ -59,7 +64,7 @@ form.addEventListener("submit", event => {
 
       playerListChildren.push(li);
 
-      drawPlayer(pos[0], pos[2], color);
+      drawPlayer(pos[0], pos[2], color, id);
     });
 
     playerList.replaceChildren(...playerListChildren);
