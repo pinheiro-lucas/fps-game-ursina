@@ -86,11 +86,12 @@ if __name__ == "__main__":
                             enemy["color"]
                         )
                 else:
-                    if enemy["hp"] > 0:
-                        player.hp = enemy["hp"]
-                    else:
-                        player.world_position = choice(respawns)
-                        player.hp = 100
+                    if enemy["hp"] != player.hp:
+                        if enemy["hp"] > 0:
+                            player.hp = enemy["hp"]
+                        else:
+                            player.world_position = choice(respawns)
+                            player.hp = 100
 
     def network_aux():
         global enemies
@@ -107,16 +108,19 @@ if __name__ == "__main__":
                     del enemies[enemy_id]
 
             # Update score
-            score_text.text = "\n".join(list(map(
+            received_score_text = "\n".join(list(map(
                 lambda x: f"{x['id']}: {x['score']}",
                 data.values()
             )))
+
+            if received_score_text != score_text.text:
+                score_text.text = received_score_text
 
     # Check if server has sent an error
     data = server.receive()
 
     if "error" in data.keys():
-        print("\nERROR:", data["error"])
+        print(f"\nERROR: {data['error']}\n")
         exit()
     else:
         """
