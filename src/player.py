@@ -25,6 +25,7 @@ class Player(FirstPersonController):
         self.rgb = random_rgb()
 
         self.p = super().__init__(
+            name="player",
             model="cube",
             speed=15,
             jump_height=2,

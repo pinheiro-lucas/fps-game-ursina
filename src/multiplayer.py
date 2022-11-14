@@ -35,14 +35,6 @@ class Multiplayer:
                     if enemy_id in self.enemies:
                         self.enemies[enemy_id].world_position = enemy["pos"]
                         self.enemies[enemy_id].rotation = enemy["rot"]
-
-                        if "bullet" in enemy.keys():
-                            Bullet(
-                                player=enemy,
-                                position=tuple(enemy["bullet"]["pos"]),
-                                rotation=tuple(enemy["bullet"]["rot"]),
-                                ignore_collision=True
-                            )
                     else:
                         self.enemies[enemy_id] = Enemy(
                             enemy["pos"],
@@ -51,6 +43,7 @@ class Multiplayer:
                             enemy["color"]
                         )
                 else:
+                    # Todo: Respawn at server-side
                     if enemy["hp"] != self.player.hp:
                         if enemy["hp"] > 0:
                             self.player.hp = enemy["hp"]

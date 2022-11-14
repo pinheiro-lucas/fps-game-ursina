@@ -12,7 +12,7 @@ class Bullet(Entity):
             **kwargs
         )
         self.player = player
-        self.speed = 500
+        self.speed = 700
         self.lifetime = 7
         self.start = time.time()
         self.ignore_collision = ignore_collision
@@ -33,6 +33,7 @@ class Bullet(Entity):
                         "target": hit
                     }
                 })
+                ray.entities[0].blink(color.red, duration=.5, delay=0)
             destroy(self)
         else:
             self.world_position += self.forward * self.speed * time.dt
