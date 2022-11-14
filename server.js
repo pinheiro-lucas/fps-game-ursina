@@ -77,10 +77,23 @@ server.on("connection", client => {
       switch (data.type) {
         // Player message
         case "player": {
-          // Initialize client variables
           if (playerId === undefined) {
-            playerId = payload.id;
-            score[playerId] = 0;
+            // Check if username already exists in the current game
+            if (Object.keys(players).includes(payload.id)) {
+              // Send error to client
+              client.send(
+                JSON.stringify({
+                  error: "This username already exists in the current game",
+                })
+              );
+              // Disconnect client
+              client.close();
+              return;
+            } else {
+              // Initialize client variables
+              playerId = payload.id;
+              score[playerId] = 0;
+            }
           }
 
           // Populate global players object

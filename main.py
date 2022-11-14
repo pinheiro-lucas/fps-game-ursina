@@ -35,9 +35,13 @@ if __name__ == "__main__":
 
     game.map = Map()
     # Map respawn spots
-    respawns = [(-18, -2.5, -1), (61, -5.5, 5), (22, 2, 58), (81, 2, 73), (5.5, -2.5, 75),
-                (-23, -2.5, 70), (-82, 2, 75), (-82, 1, 9), (-77, -2.5, -19), (-27, -2.5, -22),
-                (-31.5, -2.5, 18.5), (75, 2, -70), (30, -2.5, -79.5), (-29, 2.5, -78.5), (0.5, -2.5, -35.5)]
+    respawns = [
+        (-18, -2.5, -1), (61, -5.5, 5), (22, 2, 58),
+        (81, 2, 73), (5.5, -2.5, 75), (-23, -2.5, 70),
+        (-82, 2, 75), (-82, 1, 9), (-77, -2.5, -19),
+        (-27, -2.5, -22), (-31.5, -2.5, 18.5), (75, 2, -70),
+        (30, -2.5, -79.5), (-29, 2.5, -78.5), (0.5, -2.5, -35.5)
+    ]
     player = Player(nickname, choice(respawns))
     enemies = {}
     pos_player = player.position
@@ -50,6 +54,7 @@ if __name__ == "__main__":
         "escape": exit,
         "left mouse": player.shoot
     }
+
     # Send connection info
     server.send_info(player)
 
@@ -74,7 +79,12 @@ if __name__ == "__main__":
                         enemies[enemy_id].world_position = enemy["pos"]
                         enemies[enemy_id].rotation = enemy["rot"]
                     else:
-                        enemies[enemy_id] = Enemy(enemy["pos"], enemy["rot"], enemy_id, enemy["color"])
+                        enemies[enemy_id] = Enemy(
+                            enemy["pos"],
+                            enemy["rot"],
+                            enemy_id,
+                            enemy["color"]
+                        )
                 else:
                     if enemy["hp"] > 0:
                         player.hp = enemy["hp"]
@@ -102,20 +112,24 @@ if __name__ == "__main__":
                 data.values()
             )))
 
-    """
-        System idea: 
-            - Multiplayer is running in another thread
-                Why? Better performance and while True loop
-            - Everything that doesn't need to update fast will run in another thread
-                Why? Better performance
-    """
-    # Network thread
-    Thread(target=network, daemon=True).start()
-    # Auxiliar thread
-    Thread(target=network_aux, daemon=True).start()
+    # Check if server has sent an error
+    data = server.receive()
 
-    # First respawn spot
-    server.receive()
+    if "error" in data.keys():
+        print("\nERROR:", data["error"])
+        exit()
+    else:
+        """
+            System idea: 
+                - Multiplayer is running in another thread
+                    Why? Better performance and while True loop
+                - Everything that doesn't need to update fast will run in another thread
+                    Why? Better performance
+        """
+        # Network thread
+        Thread(target=network, daemon=True).start()
+        # Auxiliar thread
+        Thread(target=network_aux, daemon=True).start()
 
     # Update is better to make some features
     def update():
@@ -127,7 +141,7 @@ if __name__ == "__main__":
                 player.world_position = choice(respawns)
             server.send_info(player)
             pos_player = player.position
-        
+
         # Send player info on mouse change
         if mouse.moving:
             server.send_info(player)
