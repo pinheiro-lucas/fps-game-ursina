@@ -22,14 +22,6 @@ const server = new WebSocketServer(
 let players = {};
 let score = {};
 
-// Global functions
-function sendAll(payload) {
-  // Send the payload to all connected clients
-  server.clients.forEach(client => {
-    client.send(JSON.stringify(payload));
-  });
-}
-
 // Debug
 setInterval(() => console.log(players), 1000);
 
@@ -100,8 +92,6 @@ server.on("connection", client => {
           players[playerId] = payload;
           players[playerId].score = score[playerId];
 
-          // Send data to all clients on each player message
-          sendAll(players);
           break;
         }
 
@@ -127,7 +117,6 @@ server.on("connection", client => {
             }
           }
 
-          sendAll(players);
           break;
         }
 
@@ -141,8 +130,6 @@ server.on("connection", client => {
               pos: pos,
               rot: rot,
             };
-
-            sendAll(players);
           }
 
           break;
@@ -163,8 +150,6 @@ server.on("connection", client => {
       // Remove player from server and notify clients
       delete players[playerId];
       delete score[playerId];
-
-      sendAll(players);
     }
   });
 });
