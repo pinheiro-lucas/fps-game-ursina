@@ -6,6 +6,8 @@ from random import randint
 
 import json
 
+from src.bullet import Bullet
+
 from config import server
 
 
@@ -95,14 +97,15 @@ class Player(FirstPersonController):
                 position=pos,
                 rotation=rot
             )
-            server.send({
-                "type": "bullet",
-                "payload": {
-                    "origin": self.nickname,
-                    "pos": tuple(pos),
-                    "rot": tuple(rot)
-                }
-            })
+            # Todo
+            # server.send({
+            #     "type": "bullet",
+            #     "payload": {
+            #         "origin": self.nickname,
+            #         "pos": tuple(pos),
+            #         "rot": tuple(rot)
+            #     }
+            # })
             invoke(setattr, self.gun, "on_cooldown", False, delay=.15)
 
     def to_json_str(self):
@@ -120,38 +123,3 @@ class Player(FirstPersonController):
         }
 
         return json.dumps(payload)
-
-
-class Bullet(Entity):
-    def __init__(self, player: Player, ignore_collision=False, **kwargs):
-        super().__init__(
-            model="sphere",
-            scale=.2,
-            color=color.red,
-            **kwargs
-        )
-        self.player = player
-        self.speed = 300
-        self.lifetime = 7
-        self.start = time.time()
-        self.ignore_collision = ignore_collision
-
-    def update(self):
-        ray = raycast(self.world_position, self.forward, distance=self.speed * time.dt, ignore=(self, self.player))
-
-        time_left = time.time() - self.start
-
-        if ray.hit or time_left > self.lifetime:
-            # Object that have been hit
-            hit = str(ray.entity)
-            if not self.ignore_collision and hit not in ("None", "map", "player"):
-                server.send({
-                    "type": "hit",
-                    "payload": {
-                        "origin": self.player.nickname,
-                        "target": hit
-                    }
-                })
-            destroy(self)
-        else:
-            self.world_position += self.forward * self.speed * time.dt

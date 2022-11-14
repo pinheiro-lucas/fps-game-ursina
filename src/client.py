@@ -1,9 +1,12 @@
 from dotenv import dotenv_values
 from websocket import WebSocket
 
-import websocket._exceptions as err
-
 import json
+
+
+def on_error(error):
+    print(error)
+    exit()
 
 
 class Server:
@@ -15,38 +18,24 @@ class Server:
         self.server = WebSocket()
         try:
             self.server.connect(f"ws://{self.ip}:{self.port}")
-        except ConnectionError:
-            print("Can't reach the host")
+        except Exception as err:
+            on_error(err)
 
     def send_player_info(self, player):
         try:
             self.server.send(player.to_json_str())
-        except err.WebSocketConnectionClosedException:
-            print("WebSocketConnectionClosedException")
-        except err.WebSocketTimeoutException:
-            print("WebSocketTimeoutException")
-        except:
-            print("Error on sending data to server")
+        except Exception as err:
+            on_error(err)
     
     def send(self, payload: dict[str]):
         try:
             self.server.send(json.dumps(payload))
-        except err.WebSocketConnectionClosedException:
-            print("WebSocketConnectionClosedException")
-        except err.WebSocketTimeoutException:
-            print("WebSocketTimeoutException")
-        except:
-            print("Error on sending data to server")
+        except Exception as err:
+            on_error(err)
 
     def receive(self) -> dict[str] | None:
         try:
-            self.send({ "type": "watcher" })
+            self.send({"type": "watcher"})
             return json.loads(self.server.recv())
-        except err.WebSocketConnectionClosedException:
-            # Todo: Log
-            print("WebSocketConnectionClosedException")
-        except err.WebSocketTimeoutException:
-            # Todo: Log
-            print("WebSocketTimeoutException")
-        except:
-            print("Error receiving data from server")
+        except Exception as err:
+            on_error(err)

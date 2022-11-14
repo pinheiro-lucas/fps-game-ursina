@@ -10,8 +10,9 @@ from src.player import Player, Bullet
 from src.map import Map
 from src.grappling_hook import Ghook
 from src.enemy import Enemy
+from src.multiplayer import Multiplayer
 
-from config import env, server
+from config import env, server, respawns, hooks
 
 if __name__ == "__main__":
     DEVELOPMENT_MODE = json.loads(env.get("DEVELOPMENT_MODE", "false"))
@@ -34,20 +35,10 @@ if __name__ == "__main__":
     )
 
     game.map = Map()
-    # Map respawn spots
-    respawns = [
-        (-18, -2.5, -1), (61, -5.5, 5), (22, 2, 58),
-        (81, 2, 73), (5.5, -2.5, 75), (-23, -2.5, 70),
-        (-82, 2, 75), (-82, 1, 9), (-77, -2.5, -19),
-        (-27, -2.5, -22), (-31.5, -2.5, 18.5), (75, 2, -70),
-        (30, -2.5, -79.5), (-29, 2.5, -78.5), (0.5, -2.5, -35.5)
-    ]
     player = Player(nickname, choice(respawns))
-    enemies = {}
     pos_player = player.position
-    Ghook((3, 10, 3), player)
-
-    score_text = Text("", position=(-.85, .45))
+    Ghook(hooks, player)
+    multiplayer = Multiplayer(player, nickname)
 
     # All the custom commands here
     commands = {
@@ -58,90 +49,29 @@ if __name__ == "__main__":
     # Send connection info
     server.send_player_info(player)
 
-    # Multiplayer thread
-    def network():
-        global enemies
-        while True:
-            # Update rate
-            time.sleep(.01)
-
-            # Receive server information
-            data = server.receive()
-
-            for enemy in data.values():
-                enemy_id = enemy["id"]
-                enemy["pos"][1] += 1
-
-                # Ignore himself
-                if enemy_id != nickname:
-                    # Creates/updates each player position
-                    if enemy_id in enemies:
-                        enemies[enemy_id].world_position = enemy["pos"]
-                        enemies[enemy_id].rotation = enemy["rot"]
-
-                        if "bullet" in enemy.keys():
-                            Bullet(
-                                player=enemy,
-                                position=tuple(enemy["bullet"]["pos"]),
-                                rotation=tuple(enemy["bullet"]["rot"]),
-                                ignore_collision=True
-                            )
-                    else:
-                        enemies[enemy_id] = Enemy(
-                            enemy["pos"],
-                            enemy["rot"],
-                            enemy_id,
-                            enemy["color"]
-                        )
-                else:
-                    if enemy["hp"] != player.hp:
-                        if enemy["hp"] > 0:
-                            player.hp = enemy["hp"]
-                        else:
-                            player.world_position = choice(respawns)
-                            player.hp = 100
-
-    def network_aux():
-        global enemies
-        while True:
-            # Update rate
-            time.sleep(.5)
-
-            # Receive server information
-            data = server.receive()
-
-            for enemy_id in list(enemies):
-                if enemy_id not in data.keys():
-                    destroy(enemies[enemy_id])
-                    del enemies[enemy_id]
-
-            # Update score
-            received_score_text = "\n".join(list(map(
-                lambda x: f"{x['id']}: {x['score']}",
-                data.values()
-            )))
-
-            if received_score_text != score_text.text:
-                score_text.text = received_score_text
-
     # Check if server has sent an error
-    data = server.receive()
-
-    if "error" in data.keys():
-        print(f"\nERROR: {data['error']}\n")
+    try:
+        server_data = server.receive()
+        if "error" in server_data.keys():
+            print(f"\nERROR: {server_data['error']}\n")
+            exit()
+    except Exception as server_error:
+        print(server_error)
         exit()
-    else:
-        """
-            System idea: 
-                - Multiplayer is running in another thread
-                    Why? Better performance and while True loop
-                - Everything that doesn't need to update fast will run in another thread
-                    Why? Better performance
-        """
-        # Network thread
-        Thread(target=network, daemon=True).start()
-        # Auxiliar thread
-        Thread(target=network_aux, daemon=True).start()
+
+    """
+        System idea: 
+            - Multiplayer is running in another thread
+                Why? Better performance and while True loop
+            - Everything that doesn't need to update fast will run in another thread
+                Why? Better performance
+    """
+    # Network thread
+    Thread(target=multiplayer.network, daemon=True).start()
+    # Auxiliar thread
+    Thread(target=multiplayer.network_aux, daemon=True).start()
+    # Bullets thread
+    # Thread(target=multiplayer.network_bullet, daemon=True).start()
 
     # Update is better to make some features
     def update():

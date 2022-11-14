@@ -16,7 +16,7 @@ class Enemy(Entity):
         self.gun = Entity(
             parent=self,
             position=Vec2(.6, -.1),
-            scale=Vec3(.2, .2, .2), 
+            scale=Vec3(.3, .2, .2),
             rotation=Vec3(10, 180, 5),
             model="models/ak47.obj",
             color=color.gray,
