@@ -65,6 +65,8 @@ if __name__ == "__main__":
             for enemy in data.values():
                 enemy_id = enemy["id"]
                 enemy["pos"][1] += 1
+
+                # Ignore himself
                 if enemy_id != nickname:
                     # Creates/updates each player position
                     if enemy_id in enemies:
@@ -79,21 +81,39 @@ if __name__ == "__main__":
                         player.world_position = choice(respawns)
                         player.hp = 100
 
+    def network_aux():
+        while True:
+            # Update rate
+            time.sleep(.5)
+
+            # Receive server information
+            data = server.receive()
+
             for enemy_id in list(enemies):
                 if enemy_id not in data.keys():
                     destroy(enemies[enemy_id])
                     del enemies[enemy_id]
-            
+
             # Update score
             score_text.text = "\n".join(list(map(
                 lambda x: f"{x['id']}: {x['score']}",
                 data.values()
             )))
 
-    multiplayer = Thread(target=network, daemon=True).start()
+    """
+        System idea: 
+            - Multiplayer is running in another thread
+                Why? Better performance and while True loop
+            - Everything that doesn't need to update fast will run in another thread
+                Why? Better performance
+    """
+    # Network thread
+    Thread(target=network, daemon=True).start()
+    # Auxiliar thread
+    Thread(target=network_aux, daemon=True).start()
 
     # First respawn spot
-    data = server.receive()
+    server.receive()
 
     # Update is better to make some features
     def update():
