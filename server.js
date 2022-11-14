@@ -35,6 +35,14 @@ const ws = new WebSocketServer({ server });
 let players = {};
 let score = {};
 
+// Global functions
+function sendAll(payload) {
+  // Send the payload to all connected clients
+  server.clients.forEach(client => {
+    client.send(JSON.stringify(payload));
+  });
+}
+
 /*
 Sever payload
 
@@ -135,6 +143,8 @@ ws.on("connection", client => {
             pos: pos,
             rot: rot,
           };
+
+          sendAll(players);
         }
 
         break;
@@ -154,6 +164,8 @@ ws.on("connection", client => {
       // Remove player from server and notify clients
       delete players[playerId];
       delete score[playerId];
+
+      sendAll(players);
     }
   });
 });
