@@ -62,95 +62,89 @@ data = {
 
 ws.on("connection", client => {
   // Define client variables
-  let cache = undefined;
   let playerId = undefined;
 
   client.on("message", data => {
     data = data.toString();
 
-    // Simple cache
-    if (data !== cache) {
-      cache = data;
+    // Parse received data
+    data = JSON.parse(data);
+    const payload = data.payload ?? {};
 
-      // Parse received data
-      data = JSON.parse(data);
-      const payload = data.payload ?? {};
+    switch (data.type) {
+      // Player message
+      case "player": {
+        if (playerId === undefined) {
+          // Check if username already exists in the current game
+          if (Object.keys(players).includes(payload.id)) {
+            // Send error to client
+            client.send(
+              JSON.stringify({
+                error: "This username already exists in the current game",
+              })
+            );
+            // Disconnect client
+            client.close();
+            return;
+          } else {
+            // Initialize client variables
+            playerId = payload.id;
+            score[playerId] = 0;
+          }
+        }
 
-      switch (data.type) {
-        // Player message
-        case "player": {
-          if (playerId === undefined) {
-            // Check if username already exists in the current game
-            if (Object.keys(players).includes(payload.id)) {
-              // Send error to client
-              client.send(
-                JSON.stringify({
-                  error: "This username already exists in the current game",
-                })
-              );
-              // Disconnect client
-              client.close();
-              return;
-            } else {
-              // Initialize client variables
-              playerId = payload.id;
-              score[playerId] = 0;
+        // Populate global players object
+        players[playerId] = payload;
+        players[playerId].score = score[playerId];
+
+        break;
+      }
+
+      // Hit message
+      case "hit": {
+        // Hit variables
+        const { origin, target } = payload;
+        const damage = 20;
+
+        // Apply damage to target player
+        if (Object.keys(players).includes(target)) {
+          players[target].hp -= damage;
+
+          // Check target player death
+          if (players[target].hp <= 0) {
+            players[target].hp = 0;
+
+            // Update score
+            if (Object.keys(score).includes(origin)) {
+              score[origin]++;
+              players[origin].score = score[origin];
             }
           }
-
-          // Populate global players object
-          players[playerId] = payload;
-          players[playerId].score = score[playerId];
-
-          break;
         }
 
-        // Hit message
-        case "hit": {
-          // Hit variables
-          const { origin, target } = payload;
-          const damage = 20;
+        break;
+      }
 
-          // Apply damage to target player
-          if (Object.keys(players).includes(target)) {
-            players[target].hp -= damage;
+      // Bullet message
+      case "bullet": {
+        // Parse bullet payload
+        const { origin, pos, rot } = payload;
 
-            // Check target player death
-            if (players[target].hp <= 0) {
-              players[target].hp = 0;
-
-              // Update score
-              if (Object.keys(score).includes(origin)) {
-                score[origin]++;
-                players[origin].score = score[origin];
-              }
-            }
-          }
-
-          break;
+        if (Object.keys(players).includes(origin)) {
+          players[origin].bullet = {
+            pos: pos,
+            rot: rot,
+          };
         }
 
-        // Bullet message
-        case "bullet": {
-          // Parse bullet payload
-          const { origin, pos, rot } = payload;
+        break;
+      }
 
-          if (Object.keys(players).includes(origin)) {
-            players[origin].bullet = {
-              pos: pos,
-              rot: rot,
-            };
-          }
-
-          break;
-        }
-
-        // Watcher message
-        case "watcher": {
-          // Send initial payload only to the watcher client
-          client.send(JSON.stringify(players));
-          break;
-        }
+      // Watcher message
+      case "watcher": {
+        // Send initial payload only to the watcher client
+        client.send(JSON.stringify(players));
+        break;
       }
     }
   });
