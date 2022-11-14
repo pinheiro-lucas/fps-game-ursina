@@ -30,9 +30,8 @@ function sendAll(payload) {
   });
 }
 
-setInterval(function(){
-    console.log(players)
-}, 500);
+// Debug
+setInterval(() => console.log(players), 1000);
 
 /*
 Sever payload
@@ -52,6 +51,7 @@ data = {
     target: string (player id)
 
     // Bullet payload
+    origin: string (player id),
     pos: number[],
     rot: number[]
   }
@@ -76,11 +76,10 @@ server.on("connection", client => {
 
       switch (data.type) {
         // Player message
-        case "player":
+        case "player": {
           // Initialize client variables
           if (playerId === undefined) {
             playerId = payload.id;
-
             score[playerId] = 0;
           }
 
@@ -91,9 +90,10 @@ server.on("connection", client => {
           // Send data to all clients on each player message
           sendAll(players);
           break;
+        }
 
         // Hit message
-        case "hit":
+        case "hit": {
           // Hit variables
           const { origin, target } = payload;
           const damage = 20;
@@ -116,12 +116,31 @@ server.on("connection", client => {
 
           sendAll(players);
           break;
+        }
+
+        // Bullet message
+        case "bullet": {
+          // Parse bullet payload
+          const { origin, pos, rot } = payload;
+
+          if (Object.keys(players).includes(origin)) {
+            players[origin].bullet = {
+              pos: pos,
+              rot: rot,
+            };
+
+            sendAll(players);
+          }
+
+          break;
+        }
 
         // Watcher message
-        case "watcher":
+        case "watcher": {
           // Send initial payload only to the watcher client
           client.send(JSON.stringify(players));
           break;
+        }
       }
     }
   });
