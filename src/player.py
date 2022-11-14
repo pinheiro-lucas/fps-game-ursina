@@ -116,7 +116,7 @@ class Player(FirstPersonController):
 
 
 class Bullet(Entity):
-    def __init__(self, player: Player, speed=100, lifetime=7, **kwargs):
+    def __init__(self, player: Player, speed=300, lifetime=7, **kwargs):
         super().__init__(**kwargs)
         self.player = player
         self.speed = speed

@@ -28,8 +28,11 @@ function sendAll(payload) {
   server.clients.forEach(client => {
     client.send(JSON.stringify(payload));
   });
-  console.log(payload);
 }
+
+setInterval(function(){
+    console.log(players)
+}, 500);
 
 /*
 Sever payload
