@@ -33,7 +33,7 @@ class Server:
         except Exception as err:
             on_error(err)
 
-    def receive(self) -> dict[str] | None:
+    def receive(self):
         try:
             self.send({"type": "watcher"})
             return json.loads(self.server.recv())
