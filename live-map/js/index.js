@@ -6,7 +6,7 @@ const serverInput = document.querySelector("#input-server");
 const ctx = canvas.getContext("2d");
 
 const mapSize = 172;
-const playerSize = 25;
+const playerSize = 20;
 const mapFix = canvas.width / 2 - playerSize / 2;
 
 serverInput.value = localStorage.getItem("ws-fps-url") ?? "ws://localhost:3000";
