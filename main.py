@@ -6,7 +6,7 @@ from random import choice
 
 import json
 
-from src.player import Player
+from src.player import Player, Bullet
 from src.map import Map
 from src.grappling_hook import Ghook
 from src.enemy import Enemy
@@ -78,6 +78,14 @@ if __name__ == "__main__":
                     if enemy_id in enemies:
                         enemies[enemy_id].world_position = enemy["pos"]
                         enemies[enemy_id].rotation = enemy["rot"]
+
+                        if "bullet" in enemy.keys():
+                            Bullet(
+                                player=enemy,
+                                position=tuple(enemy["bullet"]["pos"]),
+                                rotation=tuple(enemy["bullet"]["rot"]),
+                                ignore_collision=True
+                            )
                     else:
                         enemies[enemy_id] = Enemy(
                             enemy["pos"],

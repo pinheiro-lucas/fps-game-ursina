@@ -88,14 +88,21 @@ class Player(FirstPersonController):
         if not self.gun.on_cooldown:
             self.gun.on_cooldown = True
             self.gun.blink(color.orange)
+            pos = self.camera_pivot.world_position + Vec3(self.forward.x, 0, self.forward.z)
+            rot = self.camera_pivot.world_rotation
             Bullet(
                 player=self,
-                model="sphere",
-                scale=.2,
-                color=color.red,
-                position=self.camera_pivot.world_position+Vec3(self.forward.x, 0, self.forward.z),
-                rotation=self.camera_pivot.world_rotation
+                position=pos,
+                rotation=rot
             )
+            server.send_bullet({
+                "type": "bullet",
+                "payload": {
+                    "origin": self.nickname,
+                    "pos": tuple(pos),
+                    "rot": tuple(rot)
+                }
+            })
             invoke(setattr, self.gun, "on_cooldown", False, delay=.15)
 
     def to_json_str(self):
@@ -116,22 +123,28 @@ class Player(FirstPersonController):
 
 
 class Bullet(Entity):
-    def __init__(self, player: Player, speed=300, lifetime=7, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, player: Player, ignore_collision=False, **kwargs):
+        super().__init__(
+            model="sphere",
+            scale=.2,
+            color=color.red,
+            **kwargs
+        )
         self.player = player
-        self.speed = speed
-        self.lifetime = lifetime
+        self.speed = 300
+        self.lifetime = 7
         self.start = time.time()
+        self.ignore_collision = ignore_collision
 
     def update(self):
-        ray = raycast(self.world_position, self.forward, distance=self.speed*time.dt, ignore=(self, self.player,))
+        ray = raycast(self.world_position, self.forward, distance=self.speed * time.dt, ignore=(self, self.player))
 
         time_left = time.time() - self.start
 
         if ray.hit or time_left > self.lifetime:
             # Object that have been hit
             hit = str(ray.entity)
-            if hit not in ("None", "map", "player"):
+            if not self.ignore_collision and hit not in ("None", "map", "player"):
                 server.send_bullet({
                     "type": "hit",
                     "payload": {
