@@ -18,7 +18,12 @@ if __name__ == "__main__":
     DEVELOPMENT_MODE = json.loads(env.get("DEVELOPMENT_MODE", "false"))
     FULLSCREEN = json.loads(env.get("FULLSCREEN", "true"))
 
-    nickname = input("Nickname: ").capitalize()
+    # Prevents any error if user closes the game
+    try:
+        nickname = input("Nickname: ").capitalize()
+    except KeyboardInterrupt:
+        print("\nConnection closed by the user")
+        exit()
 
     Entity.default_shader = lit_with_shadows_shader
 
