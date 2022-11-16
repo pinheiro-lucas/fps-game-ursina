@@ -4,7 +4,7 @@ echo "[1/5] Installing python and venv"
 sudo apt install python3 python3-pip python3-venv -y
 
 echo "[2/5] Creating the virtual env"
-python3 -m venv env
+python3 -m venv venv
 
 source env/bin/activate
 
