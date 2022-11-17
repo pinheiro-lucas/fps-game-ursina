@@ -62,10 +62,10 @@ DEVELOPMENT_MODE="false"
 FULLSCREEN="true"
 "@
 
-    echo $config > .env
+    "$config" | Out-File -FilePath .\.env -Encoding utf8
 
     echo "[8/8] Starting the game"
-    python ./main.py
+    python .\main.py
 
     pause
 }

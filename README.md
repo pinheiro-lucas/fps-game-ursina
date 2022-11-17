@@ -8,10 +8,14 @@
 ## Easy method:
 
 ### Windows:
-- Right click on `installer-windows.ps1` and Run with PowerShell
+```bash
+  PowerShell.exe -ExecutionPolicy Bypass -File .\installer-windows.ps1
+```
 
 ### Linux (Debian and Ubuntu based):
-- `sh installer-linux.sh`
+```bash
+  sh installer-linux.sh
+```
 
 ## Manual method:
 
