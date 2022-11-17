@@ -3,7 +3,17 @@
 - Multiplayer FPS game using Ursina Engine (Python)
 - Server made with javascript (easier to work with websocket)
 
-## How to use:
+# How to use
+
+## Easy method:
+
+### Windows:
+- Right click on `installer-windows.ps1` and Run with PowerShell
+
+### Linux (Debian and Ubuntu based):
+- `sh installer-linux.sh`
+
+## Manual method:
 
 - Setup `.env` (with `.env.template` example)
 
@@ -17,7 +27,7 @@
   python main.py
 ```
 
-## More about Ursina:
+# More about Ursina:
 
-- [https://www.ursinaengine.org](https://www.ursinaengine.org)
-- [https://www.ursinaengine.org/cheat_sheet_dark.html](https://www.ursinaengine.org/cheat_sheet_dark.html)
+- [Ursina Engine](https://www.ursinaengine.org)
+- [Ursina API Reference](https://www.ursinaengine.org/api_reference.html)
