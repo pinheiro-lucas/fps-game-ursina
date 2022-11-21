@@ -6,6 +6,7 @@ echo "[1/8] Installing Scoop"
 try {
 	irm get.scoop.sh | iex
 } finally {
+    scoop install git
 	$buckets = 'main'
 	foreach ($bucket in $buckets) {
 		try {
