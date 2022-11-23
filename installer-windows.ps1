@@ -6,18 +6,17 @@ echo "[1/8] Installing Scoop"
 try {
 	irm get.scoop.sh | iex
 } finally {
-    scoop install git
-	$buckets = 'main'
-	foreach ($bucket in $buckets) {
-		try {
-			echo "[2/8] Adding bucket $bucket..."
-			scoop bucket add $bucket
-		} finally {
-			# Nothing here because its just a warning.
-		}
-	}
+    try { scoop install git } finally {
+        $buckets = 'main'
+        foreach ($bucket in $buckets) {
+            try {
+                echo "[2/8] Adding bucket $bucket..."
+                scoop bucket add $bucket
+            } finally {
+                # Nothing here because its just a warning.
+            }
+        }
 
-	try { scoop install git } finally {
 		Write-Host "[3/8] Updating Scoop..."
 		scoop update git
 		scoop update
@@ -63,7 +62,8 @@ DEVELOPMENT_MODE="false"
 FULLSCREEN="true"
 "@
 
-    "$config" | Out-File -FilePath .\.env -Encoding utf8
+    New-Item .\.env
+    Set-Content .\.env "$config"
 
     echo "[8/8] Starting the game"
     python .\main.py
